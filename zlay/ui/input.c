@@ -19,6 +19,11 @@ ZLay_InputProps ZLay_InputPropsDefault(const ZLay_Theme* theme) {
   props.use_custom_style = false;
   props.text_style = ZLay_StyleDefault();
   props.use_custom_text_style = false;
+  props.cursor_visible = false;
+  props.cursor_index = 0u;
+  props.selection_start = 0u;
+  props.selection_end = 0u;
+  props.selection_visible = false;
   return props;
 }
 
@@ -38,6 +43,7 @@ ZLay_Style ZLay_InputStyle(const ZLay_InputProps* props) {
   style.padding_bottom = padding.bottom;
   style.radius = theme->radius_md;
   style.text_color = theme->text;
+  style.pointer_cursor = ZLAY_POINTER_CURSOR_TEXT;
 
   switch (resolved->variant) {
     case ZLAY_INPUT_FILLED:
@@ -77,13 +83,24 @@ ZLay_Style ZLay_InputTextStyle(const ZLay_InputProps* props, bool placeholder) {
   const ZLay_InputProps* resolved = props ? props : &fallback;
   ZLay_Style field_style = ZLay_InputStyle(resolved);
   ZLay_Style style = resolved->use_custom_text_style ? resolved->text_style : ZLay_StyleDefault();
+  const bool focused = (resolved->state & ZLAY_COMPONENT_STATE_FOCUSED) != 0u;
 
   style.background = ZLay_ColorTransparent();
   style.text_color = placeholder ? theme->text_muted : field_style.text_color;
   style.height = ZLay_Px(resolved->size == ZLAY_COMPONENT_SIZE_SM ? 16.0f : 20.0f);
+  style.pointer_cursor = ZLAY_POINTER_CURSOR_TEXT;
+  style.text_cursor_visible = resolved->cursor_visible || focused;
+  style.text_cursor_index = placeholder ? 0u : resolved->cursor_index;
+  style.text_cursor_color = field_style.text_color;
+  style.text_selection_visible = !placeholder && resolved->selection_visible && resolved->selection_start != resolved->selection_end;
+  style.text_selection_start = resolved->selection_start;
+  style.text_selection_end = resolved->selection_end;
+  style.text_selection_color = ZLay_ColorWithAlpha(theme->primary, 96);
 
   if (resolved->state & ZLAY_COMPONENT_STATE_DISABLED) {
     style.text_color = ZLay_ColorWithAlpha(style.text_color, 112);
+    style.text_cursor_visible = false;
+    style.text_selection_visible = false;
   }
 
   return style;

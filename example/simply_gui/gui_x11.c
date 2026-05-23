@@ -248,7 +248,16 @@ bool ZLay_X11ButtonDemo_Init(ZLay_X11ButtonDemo* demo) {
   XSetWMProtocols(demo->display, demo->window, &demo->wm_delete_window, 1);
 
   demo->gc = XCreateGC(demo->display, demo->window, 0, NULL);
-  demo->font = XLoadQueryFont(demo->display, "fixed");
+  demo->font = XLoadQueryFont(demo->display, "Inter");
+  if (demo->font == NULL) {
+    demo->font = XLoadQueryFont(demo->display, "-*-inter-medium-r-normal--14-*-*-*-*-*-iso10646-1");
+  }
+  if (demo->font == NULL) {
+    demo->font = XLoadQueryFont(demo->display, "-*-helvetica-medium-r-normal--14-*-*-*-*-*-iso10646-1");
+  }
+  if (demo->font == NULL) {
+    demo->font = XLoadQueryFont(demo->display, "fixed");
+  }
   if (demo->font != NULL) {
     XSetFont(demo->display, demo->gc, demo->font->fid);
   }

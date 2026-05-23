@@ -97,7 +97,7 @@ ZLay_OSStyleInfo ZLay_ImplWin32_GetStyleInfo(void) {
     {0x60, 0xA5, 0xFA, 0xFF},
     6.0f,
     32.0f,
-    "Segoe UI Variable, Segoe UI"
+    ZLAY_DEFAULT_FONT_FAMILY
   };
 }
 

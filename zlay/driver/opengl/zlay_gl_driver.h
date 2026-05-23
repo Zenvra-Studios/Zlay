@@ -27,6 +27,9 @@ typedef struct ZLay_GLVertex {
   float rect_width;
   float rect_height;
   float radius;
+  float rounded_exponent;
+  uint32_t border_rgba8;
+  float border_width;
 } ZLay_GLVertex;
 
 typedef struct ZLay_GLBatchedGeometry {

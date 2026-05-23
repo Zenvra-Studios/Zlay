@@ -108,6 +108,75 @@ static void ZLay__LayoutChildren_Flex(ZLay_Context* ctx, ZLay_Node* parent) {
   }
 }
 
+static float ZLay__GridRowHeight(const ZLay_Context* ctx, const ZLay_Node* parent, const ZLay_Node* child, float inner_h) {
+  const ZLay_Dimensions measured = ZLay__MeasureNode(ctx, child);
+  const uint32_t rows = parent->style.grid_rows;
+
+  if (parent->style.grid_auto_row_height.type != ZLAY_SIZE_AUTO) {
+    return ZLay__ResolveSize(parent->style.grid_auto_row_height, inner_h, measured.height);
+  }
+
+  if (child->style.height.type != ZLAY_SIZE_AUTO && child->style.height.type != ZLAY_SIZE_GROW) {
+    return ZLay__ResolveSize(child->style.height, inner_h, measured.height);
+  }
+
+  if (rows > 0u) {
+    const float gap = parent->style.grid_row_gap;
+    const float total_gap = rows > 1u ? gap * (float)(rows - 1u) : 0.0f;
+    return (inner_h - total_gap) / (float)rows;
+  }
+
+  return child->type == ZLAY_NODE_TEXT ? measured.height : inner_h;
+}
+
+static void ZLay__LayoutChildren_Grid(ZLay_Context* ctx, ZLay_Node* parent) {
+  const float inner_x = parent->layout.x + parent->style.padding_left;
+  const float inner_y = parent->layout.y + parent->style.padding_top;
+  const float inner_w = parent->layout.width - parent->style.padding_left - parent->style.padding_right;
+  const float inner_h = parent->layout.height - parent->style.padding_top - parent->style.padding_bottom;
+  const uint32_t columns = parent->style.grid_columns == 0u ? 1u : parent->style.grid_columns;
+  const float column_gap = parent->style.grid_column_gap;
+  const float row_gap = parent->style.grid_row_gap;
+  const float total_column_gap = columns > 1u ? column_gap * (float)(columns - 1u) : 0.0f;
+  const float column_width = columns > 0u ? (inner_w - total_column_gap) / (float)columns : inner_w;
+  uint32_t cursor = 0u;
+
+  for (int32_t child_idx = parent->first_child; child_idx >= 0; child_idx = ctx->nodes[child_idx].next_sibling) {
+    ZLay_Node* child = &ctx->nodes[child_idx];
+    uint32_t column_span;
+    uint32_t row_span;
+    uint32_t column;
+    uint32_t row;
+    float row_height;
+    float cell_width;
+    float cell_height;
+
+    if (child->style.position != ZLAY_POSITION_RELATIVE) continue;
+
+    column_span = child->style.grid_column_span == 0u ? 1u : child->style.grid_column_span;
+    row_span = child->style.grid_row_span == 0u ? 1u : child->style.grid_row_span;
+    if (column_span > columns) column_span = columns;
+
+    column = cursor % columns;
+    if (column + column_span > columns) {
+      cursor += columns - column;
+      column = 0u;
+    }
+    row = cursor / columns;
+    row_height = ZLay__GridRowHeight(ctx, parent, child, inner_h);
+    cell_width = (column_width * (float)column_span) + (column_gap * (float)(column_span - 1u));
+    cell_height = (row_height * (float)row_span) + (row_gap * (float)(row_span - 1u));
+
+    child->layout.x = inner_x + ((float)column * (column_width + column_gap)) + child->style.margin_left;
+    child->layout.y = inner_y + ((float)row * (row_height + row_gap)) + child->style.margin_top;
+    child->layout.width = cell_width - child->style.margin_left - child->style.margin_right;
+    child->layout.height = cell_height - child->style.margin_top - child->style.margin_bottom;
+
+    cursor += column_span * row_span;
+    ZLay__LayoutNode(ctx, child_idx);
+  }
+}
+
 static void ZLay__LayoutNode(ZLay_Context* ctx, int32_t idx) {
   ZLay_Node* n = &ctx->nodes[idx];
 
@@ -126,7 +195,9 @@ static void ZLay__LayoutNode(ZLay_Context* ctx, int32_t idx) {
     if (n->layout.height == 0) n->layout.height = ZLay__ResolveSize(n->style.height, ctx->viewport.height, 0.0f);
   }
 
-  if (n->type == ZLAY_NODE_BOX) {
+  if (n->type == ZLAY_NODE_BOX && n->style.layout_mode == ZLAY_LAYOUT_GRID) {
+    ZLay__LayoutChildren_Grid(ctx, n);
+  } else if (n->type == ZLAY_NODE_BOX) {
     ZLay__LayoutChildren_Flex(ctx, n);
   }
 }

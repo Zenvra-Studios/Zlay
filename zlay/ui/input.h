@@ -22,6 +22,11 @@ typedef struct ZLay_InputProps {
   bool use_custom_style;
   ZLay_Style text_style;
   bool use_custom_text_style;
+  bool cursor_visible;
+  uint32_t cursor_index;
+  uint32_t selection_start;
+  uint32_t selection_end;
+  bool selection_visible;
 } ZLay_InputProps;
 
 ZLAY_API ZLay_InputProps ZLay_InputPropsDefault(const ZLay_Theme* theme);

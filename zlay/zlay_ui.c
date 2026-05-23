@@ -170,7 +170,24 @@ ZLay_Style ZLay_StyleWithGap(ZLay_Style style, float gap) {
 }
 
 ZLay_Style ZLay_StyleWithDirection(ZLay_Style style, ZLay_FlexDirection direction) {
+  style.layout_mode = ZLAY_LAYOUT_FLEX;
   style.flex_direction = direction;
+  return style;
+}
+
+ZLay_Style ZLay_StyleWithGrid(ZLay_Style style, uint32_t columns, ZLay_Size auto_row_height, float column_gap, float row_gap) {
+  style.layout_mode = ZLAY_LAYOUT_GRID;
+  style.grid_columns = columns == 0u ? 1u : columns;
+  style.grid_auto_row_height = auto_row_height;
+  style.grid_column_gap = column_gap;
+  style.grid_row_gap = row_gap;
+  style.gap = column_gap > row_gap ? column_gap : row_gap;
+  return style;
+}
+
+ZLay_Style ZLay_StyleWithGridSpan(ZLay_Style style, uint32_t column_span, uint32_t row_span) {
+  style.grid_column_span = column_span == 0u ? 1u : column_span;
+  style.grid_row_span = row_span == 0u ? 1u : row_span;
   return style;
 }
 
@@ -182,6 +199,7 @@ ZLay_Style ZLay_StyleWithColors(ZLay_Style style, ZLay_Color background, ZLay_Co
 
 ZLay_Style ZLay_StackStyle(ZLay_FlexDirection direction, float gap, ZLay_EdgeInsets padding) {
   ZLay_Style style = ZLay_StyleDefault();
+  style.layout_mode = ZLAY_LAYOUT_FLEX;
   style.flex_direction = direction;
   style.gap = gap;
   return ZLay_StyleWithPadding(style, padding);
@@ -198,10 +216,19 @@ ZLay_Style ZLay_SurfaceStyle(ZLay_SurfaceVariant variant, const ZLay_Theme* them
 
   switch (variant) {
     case ZLAY_SURFACE_CANVAS: style.background = resolved->canvas; break;
-    case ZLAY_SURFACE_CARD: style.background = resolved->surface_raised; break;
+    case ZLAY_SURFACE_CARD:
+      style.background = resolved->surface_raised;
+      style.border_width = 1.0f;
+      style.border_color = ZLay_ColorWithAlpha(resolved->border, 128);
+      style.shadow = ZLay_ShadowMacOS();
+      break;
     case ZLAY_SURFACE_MUTED: style.background = resolved->surface_muted; break;
     case ZLAY_SURFACE_PANEL:
-    default: style.background = resolved->surface; break;
+    default:
+      style.background = resolved->surface;
+      style.border_width = 1.0f;
+      style.border_color = ZLay_ColorWithAlpha(resolved->border, 96);
+      break;
   }
   return style;
 }
@@ -242,6 +269,12 @@ ZLay_NodeDeclarationBuilder ZLay_RowDecl(ZLay_Id id, float gap, ZLay_EdgeInsets 
 
 ZLay_NodeDeclarationBuilder ZLay_ColumnDecl(ZLay_Id id, float gap, ZLay_EdgeInsets padding) {
   return ZLay_BoxDecl(id, ZLay_StackStyle(ZLAY_FLEX_COLUMN, gap, padding));
+}
+
+ZLay_NodeDeclarationBuilder ZLay_GridDecl(ZLay_Id id, uint32_t columns, ZLay_Size auto_row_height, float gap, ZLay_EdgeInsets padding) {
+  ZLay_Style style = ZLay_GridStyle(ZLay_Grow(1.0f), ZLay_Grow(1.0f), columns, auto_row_height, gap);
+  style = ZLay_StyleWithPadding(style, padding);
+  return ZLay_BoxDecl(id, style);
 }
 
 ZLay_NodeDeclarationBuilder ZLay_PanelDecl(ZLay_Id id, const ZLay_Theme* theme) {

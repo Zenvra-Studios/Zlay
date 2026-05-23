@@ -417,7 +417,7 @@ bool ZLay_Win32ButtonDemo_Init(ZLay_Win32ButtonDemo* demo, HINSTANCE instance, i
     CLIP_DEFAULT_PRECIS,
     CLEARTYPE_QUALITY,
     DEFAULT_PITCH | FF_SWISS,
-    "Segoe UI"
+    "Inter"
   );
 
   config = ZLay_ConfigDefault();

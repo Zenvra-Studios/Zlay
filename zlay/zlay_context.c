@@ -71,6 +71,24 @@ void ZLay_SetMeasureTextFunction(ZLay_Context* ctx, ZLay_MeasureTextFn fn, void*
   ctx->measure_text_user = user;
 }
 
+bool ZLay_ContextFindBounds(const ZLay_Context* ctx, ZLay_Id id, ZLay_Rect* out_bounds) {
+  uint32_t i;
+
+  if (ctx == NULL || out_bounds == NULL) {
+    return false;
+  }
+
+  for (i = 0; i < ctx->node_count; ++i) {
+    const ZLay_Node* node = &ctx->nodes[i];
+    if (node->id.hash == id.hash) {
+      *out_bounds = node->layout;
+      return true;
+    }
+  }
+
+  return false;
+}
+
 void ZLay_BeginLayout(ZLay_Context* ctx) {
   if (ctx == NULL) {
     return;

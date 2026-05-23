@@ -17,7 +17,10 @@ static ZLay_GLVertex ZLay__MakeGLVertex(float x, float y, const ZLay_RenderComma
     cmd->bounds.y,
     cmd->bounds.width,
     cmd->bounds.height,
-    cmd->radius
+    cmd->radius,
+    ZLay_RoundedEffectiveExponent(cmd->rounded),
+    ZLay__PackRGBA8(cmd->border_color),
+    cmd->border_width
   };
 }
 

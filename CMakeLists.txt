@@ -257,6 +257,10 @@ else()
   target_compile_options(zlay PRIVATE -Wall -Wextra -Wpedantic)
 endif()
 
+if (UNIX AND NOT APPLE)
+  target_link_libraries(zlay PRIVATE m)
+endif()
+
 if (ZLAY_BUILD_LIFECYCLE)
   target_sources(zlay PRIVATE ${ZLAY_LIFECYCLE_SOURCES} ${ZLAY_LIFECYCLE_HEADERS})
 
@@ -400,8 +404,23 @@ if (ZLAY_BUILD_EXAMPLES)
   target_include_directories(zlay_example_basic_c PRIVATE ${ZLAY_PUBLIC_INCLUDE_DIRS})
   target_link_libraries(zlay_example_basic_c PRIVATE zlay)
 
+  add_executable(zlay_example_wrapper example/zlay_wrapper/main.c)
+  target_compile_features(zlay_example_wrapper PRIVATE c_std_11)
+  target_include_directories(zlay_example_wrapper PRIVATE ${ZLAY_PUBLIC_INCLUDE_DIRS})
+  target_link_libraries(zlay_example_wrapper PRIVATE zlay)
+
+  add_executable(zlay_example_wrapper_cpp example/zlay_wrapper/main.cpp)
+  target_compile_features(zlay_example_wrapper_cpp PRIVATE cxx_std_20)
+  target_include_directories(zlay_example_wrapper_cpp PRIVATE ${ZLAY_PUBLIC_INCLUDE_DIRS})
+  target_link_libraries(zlay_example_wrapper_cpp PRIVATE zlay)
+
   find_package(X11 QUIET)
   if (X11_FOUND)
+    if (TARGET zlay_example_wrapper_cpp)
+      target_include_directories(zlay_example_wrapper_cpp PRIVATE ${X11_INCLUDE_DIR})
+      target_link_libraries(zlay_example_wrapper_cpp PRIVATE ${X11_LIBRARIES})
+    endif()
+
     add_executable(zlay_example_gui_x11
       example/simply_gui/gui_x11.c
       include/simply_gui/gui_x11.h
@@ -435,21 +454,29 @@ if (ZLAY_BUILD_EXAMPLES)
   if (TARGET zlay_driver_opengl)
     target_link_libraries(zlay_example_basic PRIVATE zlay_driver_opengl)
     target_link_libraries(zlay_example_basic_c PRIVATE zlay_driver_opengl)
+    target_link_libraries(zlay_example_wrapper PRIVATE zlay_driver_opengl)
+    target_link_libraries(zlay_example_wrapper_cpp PRIVATE zlay_driver_opengl)
   endif()
 
   if (TARGET zlay_renderer)
     target_link_libraries(zlay_example_basic PRIVATE zlay_renderer)
     target_link_libraries(zlay_example_basic_c PRIVATE zlay_renderer)
+    target_link_libraries(zlay_example_wrapper PRIVATE zlay_renderer)
+    target_link_libraries(zlay_example_wrapper_cpp PRIVATE zlay_renderer)
   endif()
 
   if (TARGET zlay_shaders)
     target_link_libraries(zlay_example_basic PRIVATE zlay_shaders)
     target_link_libraries(zlay_example_basic_c PRIVATE zlay_shaders)
+    target_link_libraries(zlay_example_wrapper PRIVATE zlay_shaders)
+    target_link_libraries(zlay_example_wrapper_cpp PRIVATE zlay_shaders)
   endif()
 
   if (TARGET zlay_os)
     target_link_libraries(zlay_example_basic PRIVATE zlay_os)
     target_link_libraries(zlay_example_basic_c PRIVATE zlay_os)
+    target_link_libraries(zlay_example_wrapper PRIVATE zlay_os)
+    target_link_libraries(zlay_example_wrapper_cpp PRIVATE zlay_os)
     if (TARGET zlay_example_gui_x11)
       target_link_libraries(zlay_example_gui_x11 PRIVATE zlay_os)
     endif()

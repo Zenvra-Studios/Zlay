@@ -29,6 +29,8 @@ ZLAY_API ZLay_Style ZLay_StyleWithPadding(ZLay_Style style, ZLay_EdgeInsets padd
 ZLAY_API ZLay_Style ZLay_StyleWithMargin(ZLay_Style style, ZLay_EdgeInsets margin);
 ZLAY_API ZLay_Style ZLay_StyleWithGap(ZLay_Style style, float gap);
 ZLAY_API ZLay_Style ZLay_StyleWithDirection(ZLay_Style style, ZLay_FlexDirection direction);
+ZLAY_API ZLay_Style ZLay_StyleWithGrid(ZLay_Style style, uint32_t columns, ZLay_Size auto_row_height, float column_gap, float row_gap);
+ZLAY_API ZLay_Style ZLay_StyleWithGridSpan(ZLay_Style style, uint32_t column_span, uint32_t row_span);
 ZLAY_API ZLay_Style ZLay_StyleWithColors(ZLay_Style style, ZLay_Color background, ZLay_Color text);
 ZLAY_API ZLay_Style ZLay_StackStyle(ZLay_FlexDirection direction, float gap, ZLay_EdgeInsets padding);
 ZLAY_API ZLay_Style ZLay_SurfaceStyle(ZLay_SurfaceVariant variant, const ZLay_Theme* theme);
@@ -38,6 +40,7 @@ ZLAY_API ZLay_Style ZLay_DividerStyle(ZLay_Axis axis, const ZLay_Theme* theme);
 
 ZLAY_API ZLay_NodeDeclarationBuilder ZLay_RowDecl(ZLay_Id id, float gap, ZLay_EdgeInsets padding);
 ZLAY_API ZLay_NodeDeclarationBuilder ZLay_ColumnDecl(ZLay_Id id, float gap, ZLay_EdgeInsets padding);
+ZLAY_API ZLay_NodeDeclarationBuilder ZLay_GridDecl(ZLay_Id id, uint32_t columns, ZLay_Size auto_row_height, float gap, ZLay_EdgeInsets padding);
 ZLAY_API ZLay_NodeDeclarationBuilder ZLay_PanelDecl(ZLay_Id id, const ZLay_Theme* theme);
 ZLAY_API ZLay_NodeDeclarationBuilder ZLay_CardDecl(ZLay_Id id, const ZLay_Theme* theme);
 ZLAY_API ZLay_NodeDeclarationBuilder ZLay_SpacerDecl(ZLay_Id id, float size, ZLay_Axis axis);

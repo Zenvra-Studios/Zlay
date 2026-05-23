@@ -72,7 +72,7 @@ ZLay_OSStyleInfo ZLay_ImplCocoa_GetStyleInfo(void) {
     {0x0A, 0x84, 0xFF, 0xFF},
     10.0f,
     30.0f,
-    "SF Pro, Helvetica Neue"
+    ZLAY_DEFAULT_FONT_FAMILY
   };
 }
 

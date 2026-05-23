@@ -71,7 +71,7 @@ ZLay_OSStyleInfo ZLay_ImplX11_GetStyleInfo(void) {
     {0x5E, 0x9B, 0xFF, 0xFF},
     8.0f,
     32.0f,
-    "Inter, Noto Sans, DejaVu Sans"
+    ZLAY_DEFAULT_FONT_FAMILY
   };
 }
 

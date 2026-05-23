@@ -68,7 +68,7 @@ ZLay_OSStyleInfo ZLay_ImplGTK_GetStyleInfo(void) {
     {0x78, 0xAE, 0xED, 0xFF},
     9.0f,
     34.0f,
-    "Adwaita Sans, Cantarell, Noto Sans"
+    ZLAY_DEFAULT_FONT_FAMILY
   };
 }
 

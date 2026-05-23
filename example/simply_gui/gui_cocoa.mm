@@ -326,7 +326,10 @@ bool ZLay_CocoaButtonDemo_Init(ZLay_CocoaButtonDemo* demo) {
   demo->app = NSApp;
   [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
 
-  font = [[NSFont systemFontOfSize:14.0] retain];
+  font = [[NSFont fontWithName:@"Inter" size:14.0] retain];
+  if (font == NULL) {
+    font = [[NSFont systemFontOfSize:14.0] retain];
+  }
   demo->font = font;
 
   config = ZLay_ConfigDefault();

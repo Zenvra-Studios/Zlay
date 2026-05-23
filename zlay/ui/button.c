@@ -43,6 +43,7 @@ ZLay_Style ZLay_ButtonStyle(const ZLay_ButtonProps* props) {
   style.padding_bottom = padding.bottom;
   style.radius = resolved->variant == ZLAY_BUTTON_GHOST ? theme->radius_md : theme->radius_pill;
   style.text_color = theme->text_inverse;
+  style.pointer_cursor = ZLAY_POINTER_CURSOR_POINTER;
 
   switch (resolved->variant) {
     case ZLAY_BUTTON_SECONDARY:
@@ -80,6 +81,7 @@ ZLay_Style ZLay_ButtonStyle(const ZLay_ButtonProps* props) {
   if (resolved->state & ZLAY_COMPONENT_STATE_DISABLED) {
     style.background = ZLay_ColorWithAlpha(style.background, style.background.a == 0 ? 0 : 96);
     style.text_color = ZLay_ColorWithAlpha(style.text_color, 112);
+    style.pointer_cursor = ZLAY_POINTER_CURSOR_DEFAULT;
   }
 
   return style;
