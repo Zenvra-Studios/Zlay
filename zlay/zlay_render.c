@@ -1,4 +1,4 @@
-#include "zlay_internal.h"
+#include <zlay_internal.h>
 
 static void ZLay__PushRectCommand(ZLay_Context* ctx, const ZLay_Node* n) {
   if (ctx->command_count >= ctx->config.max_commands) return;
@@ -42,4 +42,3 @@ void ZLay__BuildRenderCommands(ZLay_Context* ctx) {
   if (ctx->root_index < 0) return;
   ZLay__Walk(ctx, ctx->root_index);
 }
-

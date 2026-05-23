@@ -1,6 +1,6 @@
-#include "zlay_antialiasing.h"
+#include <zlay_antialiasing.h>
 
-#include "zlay_shader_sources.inc"
+#include <zlay_shader_sources.inc>
 
 const char* ZLay_ShaderLanguageName(ZLay_ShaderLanguage language) {
   switch (language) {

@@ -5,9 +5,9 @@
 extern "C" {
 #endif
 
-#include "zlay.h"
-#include "renderer/zlay_renderer.h"
-#include "zlay_antialiasing.h"
+#include <zlay.h>
+#include <renderer/zlay_renderer.h>
+#include <zlay_antialiasing.h>
 
 // Vulkan driver is intentionally kept as a thin translation layer.
 // Real VkDevice/VkPipeline integration will live in app/tool code.

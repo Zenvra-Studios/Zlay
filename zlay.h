@@ -26,17 +26,131 @@ extern "C" {
 #define ZLAY_VERSION ZLAY_MAKE_VERSION(ZLAY_VERSION_MAJOR, ZLAY_VERSION_MINOR, ZLAY_VERSION_PATCH)
 
 // -----------------------------
+// Platform detection
+// -----------------------------
+
+#define ZLAY_PLATFORM_UNKNOWN 0
+#define ZLAY_PLATFORM_WINDOWS 0
+#define ZLAY_PLATFORM_WIN32 0
+#define ZLAY_PLATFORM_WIN64 0
+#define ZLAY_PLATFORM_APPLE 0
+#define ZLAY_PLATFORM_MACOS 0
+#define ZLAY_PLATFORM_MACCATALYST 0
+#define ZLAY_PLATFORM_IOS 0
+#define ZLAY_PLATFORM_TVOS 0
+#define ZLAY_PLATFORM_WATCHOS 0
+#define ZLAY_PLATFORM_VISIONOS 0
+#define ZLAY_PLATFORM_ANDROID 0
+#define ZLAY_PLATFORM_LINUX 0
+#define ZLAY_PLATFORM_FREEBSD 0
+#define ZLAY_PLATFORM_OPENBSD 0
+#define ZLAY_PLATFORM_NETBSD 0
+#define ZLAY_PLATFORM_DRAGONFLYBSD 0
+#define ZLAY_PLATFORM_BSD 0
+#define ZLAY_PLATFORM_SOLARIS 0
+#define ZLAY_PLATFORM_HAIKU 0
+#define ZLAY_PLATFORM_CYGWIN 0
+#define ZLAY_PLATFORM_EMSCRIPTEN 0
+#define ZLAY_PLATFORM_UNIX 0
+
+#if defined(_WIN64)
+  #undef ZLAY_PLATFORM_WINDOWS
+  #define ZLAY_PLATFORM_WINDOWS 1
+  #undef ZLAY_PLATFORM_WIN64
+  #define ZLAY_PLATFORM_WIN64 1
+#elif defined(_WIN32)
+  #undef ZLAY_PLATFORM_WINDOWS
+  #define ZLAY_PLATFORM_WINDOWS 1
+  #undef ZLAY_PLATFORM_WIN32
+  #define ZLAY_PLATFORM_WIN32 1
+#elif defined(__CYGWIN__)
+  #undef ZLAY_PLATFORM_CYGWIN
+  #define ZLAY_PLATFORM_CYGWIN 1
+#elif defined(__EMSCRIPTEN__)
+  #undef ZLAY_PLATFORM_EMSCRIPTEN
+  #define ZLAY_PLATFORM_EMSCRIPTEN 1
+#elif defined(__APPLE__) && defined(__MACH__)
+  #include <TargetConditionals.h>
+  #undef ZLAY_PLATFORM_APPLE
+  #define ZLAY_PLATFORM_APPLE 1
+  #if defined(TARGET_OS_VISION) && TARGET_OS_VISION
+    #undef ZLAY_PLATFORM_VISIONOS
+    #define ZLAY_PLATFORM_VISIONOS 1
+  #elif defined(TARGET_OS_TV) && TARGET_OS_TV
+    #undef ZLAY_PLATFORM_TVOS
+    #define ZLAY_PLATFORM_TVOS 1
+  #elif defined(TARGET_OS_WATCH) && TARGET_OS_WATCH
+    #undef ZLAY_PLATFORM_WATCHOS
+    #define ZLAY_PLATFORM_WATCHOS 1
+  #elif defined(TARGET_OS_MACCATALYST) && TARGET_OS_MACCATALYST
+    #undef ZLAY_PLATFORM_MACCATALYST
+    #define ZLAY_PLATFORM_MACCATALYST 1
+  #elif defined(TARGET_OS_IOS) && TARGET_OS_IOS
+    #undef ZLAY_PLATFORM_IOS
+    #define ZLAY_PLATFORM_IOS 1
+  #elif defined(TARGET_OS_IPHONE) && TARGET_OS_IPHONE
+    #undef ZLAY_PLATFORM_IOS
+    #define ZLAY_PLATFORM_IOS 1
+  #else
+    #undef ZLAY_PLATFORM_MACOS
+    #define ZLAY_PLATFORM_MACOS 1
+  #endif
+#elif defined(__ANDROID__)
+  #undef ZLAY_PLATFORM_ANDROID
+  #define ZLAY_PLATFORM_ANDROID 1
+#elif defined(__linux__)
+  #undef ZLAY_PLATFORM_LINUX
+  #define ZLAY_PLATFORM_LINUX 1
+#elif defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
+  #undef ZLAY_PLATFORM_FREEBSD
+  #define ZLAY_PLATFORM_FREEBSD 1
+  #undef ZLAY_PLATFORM_BSD
+  #define ZLAY_PLATFORM_BSD 1
+#elif defined(__OpenBSD__)
+  #undef ZLAY_PLATFORM_OPENBSD
+  #define ZLAY_PLATFORM_OPENBSD 1
+  #undef ZLAY_PLATFORM_BSD
+  #define ZLAY_PLATFORM_BSD 1
+#elif defined(__NetBSD__)
+  #undef ZLAY_PLATFORM_NETBSD
+  #define ZLAY_PLATFORM_NETBSD 1
+  #undef ZLAY_PLATFORM_BSD
+  #define ZLAY_PLATFORM_BSD 1
+#elif defined(__DragonFly__)
+  #undef ZLAY_PLATFORM_DRAGONFLYBSD
+  #define ZLAY_PLATFORM_DRAGONFLYBSD 1
+  #undef ZLAY_PLATFORM_BSD
+  #define ZLAY_PLATFORM_BSD 1
+#elif defined(__sun) && defined(__SVR4)
+  #undef ZLAY_PLATFORM_SOLARIS
+  #define ZLAY_PLATFORM_SOLARIS 1
+#elif defined(__HAIKU__)
+  #undef ZLAY_PLATFORM_HAIKU
+  #define ZLAY_PLATFORM_HAIKU 1
+#endif
+
+#if ZLAY_PLATFORM_APPLE || ZLAY_PLATFORM_ANDROID || ZLAY_PLATFORM_LINUX || ZLAY_PLATFORM_BSD || ZLAY_PLATFORM_SOLARIS || ZLAY_PLATFORM_HAIKU || ZLAY_PLATFORM_CYGWIN
+  #undef ZLAY_PLATFORM_UNIX
+  #define ZLAY_PLATFORM_UNIX 1
+#endif
+
+#if !(ZLAY_PLATFORM_WINDOWS || ZLAY_PLATFORM_APPLE || ZLAY_PLATFORM_ANDROID || ZLAY_PLATFORM_LINUX || ZLAY_PLATFORM_BSD || ZLAY_PLATFORM_SOLARIS || ZLAY_PLATFORM_HAIKU || ZLAY_PLATFORM_CYGWIN || ZLAY_PLATFORM_EMSCRIPTEN)
+  #undef ZLAY_PLATFORM_UNKNOWN
+  #define ZLAY_PLATFORM_UNKNOWN 1
+#endif
+
+// -----------------------------
 // DLL export
 // -----------------------------
 
 #ifndef ZLAY_API
-  #if defined(_WIN32) && defined(ZLAY_SHARED)
+  #if defined(ZLAY_SHARED) && ZLAY_PLATFORM_WINDOWS
     #if defined(ZLAY_BUILDING)
       #define ZLAY_API __declspec(dllexport)
     #else
       #define ZLAY_API __declspec(dllimport)
     #endif
-  #elif defined(ZLAY_SHARED) && defined(__GNUC__)
+  #elif defined(ZLAY_SHARED) && (defined(__GNUC__) || defined(__clang__))
     #define ZLAY_API __attribute__((visibility("default")))
   #else
     #define ZLAY_API

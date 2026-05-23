@@ -94,7 +94,11 @@ if (ZLAY_BUILD_DRIVERS AND NOT ZLAY_BUILD_RENDERER)
   message(FATAL_ERROR "ZLAY_BUILD_DRIVERS requires ZLAY_BUILD_RENDERER because driver adapters implement the renderer interface")
 endif()
 
-add_library(zlay STATIC)
+if (ZLAY_BUILD_DRIVERS AND NOT ZLAY_BUILD_SHADERS)
+  message(FATAL_ERROR "ZLAY_BUILD_DRIVERS requires ZLAY_BUILD_SHADERS because driver adapters use built-in shader sources")
+endif()
+
+add_library(zlay SHARED)
 add_library(zlay::zlay ALIAS zlay)
 
 target_compile_features(zlay PUBLIC c_std_99)
@@ -102,6 +106,13 @@ set_target_properties(zlay PROPERTIES
   C_STANDARD 99
   C_STANDARD_REQUIRED YES
   POSITION_INDEPENDENT_CODE ON
+)
+
+target_compile_definitions(zlay
+  PRIVATE
+    ZLAY_BUILDING
+  PUBLIC
+    ZLAY_SHARED
 )
 
 target_sources(zlay
@@ -122,29 +133,12 @@ else()
   target_compile_options(zlay PRIVATE -Wall -Wextra -Wpedantic)
 endif()
 
-if (ZLAY_BUILD_DRIVERS)
-  add_library(zlay_driver_opengl STATIC)
-  add_library(zlay::driver_opengl ALIAS zlay_driver_opengl)
-  target_compile_features(zlay_driver_opengl PUBLIC c_std_99)
-  target_sources(zlay_driver_opengl PRIVATE ${ZLAY_DRIVER_OPENGL_SOURCES} ${ZLAY_DRIVER_OPENGL_HEADERS})
-  target_include_directories(zlay_driver_opengl PUBLIC ${ZLAY_PUBLIC_INCLUDE_DIRS})
-  target_link_libraries(zlay_driver_opengl PUBLIC zlay)
-
-  add_library(zlay_driver_vulkan STATIC)
-  add_library(zlay::driver_vulkan ALIAS zlay_driver_vulkan)
-  target_compile_features(zlay_driver_vulkan PUBLIC c_std_99)
-  target_sources(zlay_driver_vulkan PRIVATE ${ZLAY_DRIVER_VULKAN_SOURCES} ${ZLAY_DRIVER_VULKAN_HEADERS})
-  target_include_directories(zlay_driver_vulkan PUBLIC ${ZLAY_PUBLIC_INCLUDE_DIRS})
-  target_link_libraries(zlay_driver_vulkan PUBLIC zlay)
-endif()
-
 if (ZLAY_BUILD_RENDERER)
-  add_library(zlay_renderer STATIC)
+  target_sources(zlay PRIVATE ${ZLAY_RENDERER_SOURCES} ${ZLAY_RENDERER_HEADERS})
+
+  add_library(zlay_renderer INTERFACE)
   add_library(zlay::renderer ALIAS zlay_renderer)
-  target_compile_features(zlay_renderer PUBLIC c_std_99)
-  target_sources(zlay_renderer PRIVATE ${ZLAY_RENDERER_SOURCES} ${ZLAY_RENDERER_HEADERS})
-  target_include_directories(zlay_renderer PUBLIC ${ZLAY_PUBLIC_INCLUDE_DIRS})
-  target_link_libraries(zlay_renderer PUBLIC zlay)
+  target_link_libraries(zlay_renderer INTERFACE zlay)
 endif()
 
 if (ZLAY_BUILD_SHADERS)
@@ -186,37 +180,28 @@ if (ZLAY_BUILD_SHADERS)
     VERBATIM
   )
 
-  add_library(zlay_shaders STATIC)
+  target_sources(zlay PRIVATE ${ZLAY_SHADER_LIBRARY_SOURCES} ${ZLAY_SHADER_LIBRARY_HEADERS} ${ZLAY_SHADER_EMBED_FILE})
+  target_include_directories(zlay PRIVATE ${ZLAY_GENERATED_DIR})
+
+  add_library(zlay_shaders INTERFACE)
   add_library(zlay::shaders ALIAS zlay_shaders)
-  target_compile_features(zlay_shaders PUBLIC c_std_99)
-  target_sources(zlay_shaders PRIVATE ${ZLAY_SHADER_LIBRARY_SOURCES} ${ZLAY_SHADER_LIBRARY_HEADERS} ${ZLAY_SHADER_EMBED_FILE})
-  target_include_directories(zlay_shaders PUBLIC ${ZLAY_PUBLIC_INCLUDE_DIRS} ${ZLAY_GENERATED_DIR})
-  target_link_libraries(zlay_shaders PUBLIC zlay)
+  target_link_libraries(zlay_shaders INTERFACE zlay)
 endif()
 
-if (TARGET zlay_renderer AND TARGET zlay_driver_opengl)
-  target_link_libraries(zlay_driver_opengl PUBLIC zlay_renderer)
-endif()
+if (ZLAY_BUILD_DRIVERS)
+  target_sources(zlay PRIVATE ${ZLAY_DRIVER_OPENGL_SOURCES} ${ZLAY_DRIVER_OPENGL_HEADERS})
+  target_sources(zlay PRIVATE ${ZLAY_DRIVER_VULKAN_SOURCES} ${ZLAY_DRIVER_VULKAN_HEADERS})
 
-if (TARGET zlay_renderer AND TARGET zlay_driver_vulkan)
-  target_link_libraries(zlay_driver_vulkan PUBLIC zlay_renderer)
-endif()
+  add_library(zlay_driver_opengl INTERFACE)
+  add_library(zlay::driver_opengl ALIAS zlay_driver_opengl)
+  target_link_libraries(zlay_driver_opengl INTERFACE zlay)
 
-if (TARGET zlay_shaders AND TARGET zlay_driver_opengl)
-  target_link_libraries(zlay_driver_opengl PUBLIC zlay_shaders)
-endif()
-
-if (TARGET zlay_shaders AND TARGET zlay_driver_vulkan)
-  target_link_libraries(zlay_driver_vulkan PUBLIC zlay_shaders)
+  add_library(zlay_driver_vulkan INTERFACE)
+  add_library(zlay::driver_vulkan ALIAS zlay_driver_vulkan)
+  target_link_libraries(zlay_driver_vulkan INTERFACE zlay)
 endif()
 
 if (ZLAY_BUILD_OS)
-  add_library(zlay_os STATIC)
-  add_library(zlay::os ALIAS zlay_os)
-
-  target_compile_features(zlay_os PUBLIC c_std_99)
-  target_include_directories(zlay_os PUBLIC ${ZLAY_PUBLIC_INCLUDE_DIRS})
-
   set(ZLAY_EFFECTIVE_OS_BACKEND "${ZLAY_OS_BACKEND}")
   if (ZLAY_EFFECTIVE_OS_BACKEND STREQUAL "auto")
     if (WIN32)
@@ -229,22 +214,26 @@ if (ZLAY_BUILD_OS)
   endif()
 
   if (ZLAY_EFFECTIVE_OS_BACKEND STREQUAL "win32")
-    target_sources(zlay_os PRIVATE ${ZLAY_OS_HEADERS} ${ZLAY_OS_WIN32_SOURCES} ${ZLAY_OS_WIN32_HEADERS})
+    target_sources(zlay PRIVATE ${ZLAY_OS_HEADERS} ${ZLAY_OS_WIN32_SOURCES} ${ZLAY_OS_WIN32_HEADERS})
   elseif(ZLAY_EFFECTIVE_OS_BACKEND STREQUAL "winrt")
-    target_sources(zlay_os PRIVATE ${ZLAY_OS_HEADERS} ${ZLAY_OS_WINRT_SOURCES} ${ZLAY_OS_WINRT_HEADERS})
+    target_sources(zlay PRIVATE ${ZLAY_OS_HEADERS} ${ZLAY_OS_WINRT_SOURCES} ${ZLAY_OS_WINRT_HEADERS})
   elseif(ZLAY_EFFECTIVE_OS_BACKEND STREQUAL "cocoa")
-    target_sources(zlay_os PRIVATE ${ZLAY_OS_HEADERS} ${ZLAY_OS_COCOA_SOURCES} ${ZLAY_OS_COCOA_HEADERS})
+    target_sources(zlay PRIVATE ${ZLAY_OS_HEADERS} ${ZLAY_OS_COCOA_SOURCES} ${ZLAY_OS_COCOA_HEADERS})
   elseif(ZLAY_EFFECTIVE_OS_BACKEND STREQUAL "gtk")
-    target_sources(zlay_os PRIVATE ${ZLAY_OS_HEADERS} ${ZLAY_OS_GTK_SOURCES} ${ZLAY_OS_GTK_HEADERS})
+    target_sources(zlay PRIVATE ${ZLAY_OS_HEADERS} ${ZLAY_OS_GTK_SOURCES} ${ZLAY_OS_GTK_HEADERS})
     if (UNIX AND NOT APPLE)
-      target_link_libraries(zlay_os PRIVATE rt)
+      target_link_libraries(zlay PRIVATE rt)
     endif()
   elseif(ZLAY_EFFECTIVE_OS_BACKEND STREQUAL "x11")
-    target_sources(zlay_os PRIVATE ${ZLAY_OS_HEADERS} ${ZLAY_OS_X11_SOURCES} ${ZLAY_OS_X11_HEADERS})
-    target_link_libraries(zlay_os PRIVATE rt)
+    target_sources(zlay PRIVATE ${ZLAY_OS_HEADERS} ${ZLAY_OS_X11_SOURCES} ${ZLAY_OS_X11_HEADERS})
+    target_link_libraries(zlay PRIVATE rt)
   else()
     message(FATAL_ERROR "Unknown ZLAY_OS_BACKEND='${ZLAY_OS_BACKEND}'")
   endif()
+
+  add_library(zlay_os INTERFACE)
+  add_library(zlay::os ALIAS zlay_os)
+  target_link_libraries(zlay_os INTERFACE zlay)
 endif()
 
 if (ZLAY_BUILD_EXAMPLES)

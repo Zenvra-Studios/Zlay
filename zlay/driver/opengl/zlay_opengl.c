@@ -1,6 +1,6 @@
-#include "zlay_opengl.h"
+#include <driver/opengl/zlay_opengl.h>
 
-#include "zlay_simd.h"
+#include <zlay_simd.h>
 
 static uint32_t ZLay__PackRGBA8(ZLay_Color c) {
   return (uint32_t)c.r | ((uint32_t)c.g << 8u) | ((uint32_t)c.b << 16u) | ((uint32_t)c.a << 24u);

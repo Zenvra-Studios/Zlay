@@ -1,4 +1,4 @@
-#include "zlay_internal.h"
+#include <zlay_internal.h>
 
 static size_t ZLay__AlignUp(size_t value, size_t alignment) {
   if (alignment == 0) return value;
@@ -27,4 +27,3 @@ void* ZLay_ArenaAlloc(ZLay_Arena* arena, size_t size, size_t alignment) {
   arena->offset = aligned + size;
   return result;
 }
-

@@ -1,4 +1,4 @@
-#include "zlay_internal.h"
+#include <zlay_internal.h>
 
 ZLay_Config ZLay_ConfigDefault(void) {
   ZLay_Config c;
@@ -64,4 +64,3 @@ ZLay_NodeDeclarationBuilder ZLay_TextDecl(ZLay_Id id, ZLay_String text, ZLay_Sty
   b.decl.text = text;
   return b;
 }
-

@@ -1,5 +1,13 @@
-/build/
 /.cache/
+/.vscode/
+
 compile_commands.json
 __pycache__/
+
+/build/
+/out/
+
 *.pyc
+*.exe
+*.out
+

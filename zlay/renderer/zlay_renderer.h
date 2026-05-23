@@ -5,7 +5,7 @@
 extern "C" {
 #endif
 
-#include "zlay.h"
+#include <zlay.h>
 
 typedef enum ZLay_RendererBackendType {
   ZLAY_RENDERER_BACKEND_NULL = 0,

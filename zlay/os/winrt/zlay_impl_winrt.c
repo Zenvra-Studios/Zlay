@@ -1,4 +1,4 @@
-#include "os/winrt/zlay_impl_winrt.h"
+#include <os/winrt/zlay_impl_winrt.h>
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -83,4 +83,3 @@ void ZLay_OS_NewFrame(ZLay_Context* ctx, const ZLay_OSFrameInfo* frame) {
   if (!frame) return;
   ZLay_ImplWinRT_NewFrame(ctx, frame->width, frame->height);
 }
-

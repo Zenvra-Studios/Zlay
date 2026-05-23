@@ -4,7 +4,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "zlay.h"
+#include <zlay.h>
 
 #ifndef ZLAY_ASSERT
   #include <assert.h>

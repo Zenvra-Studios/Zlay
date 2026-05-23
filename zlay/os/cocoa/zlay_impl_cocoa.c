@@ -1,4 +1,4 @@
-#include "os/cocoa/zlay_impl_cocoa.h"
+#include <os/cocoa/zlay_impl_cocoa.h>
 
 #include <mach/mach_time.h>
 
@@ -82,4 +82,3 @@ void ZLay_OS_NewFrame(ZLay_Context* ctx, const ZLay_OSFrameInfo* frame) {
   if (!frame) return;
   ZLay_ImplCocoa_NewFrame(ctx, frame->width, frame->height);
 }
-

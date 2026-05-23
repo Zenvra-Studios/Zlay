@@ -1,4 +1,4 @@
-#include "zlay_internal.h"
+#include <zlay_internal.h>
 
 static void* ZLay__AllocOrNull(ZLay_Arena* a, size_t bytes, size_t alignment) {
   void* p = ZLay_ArenaAlloc(a, bytes, alignment);
@@ -11,14 +11,6 @@ static ZLay_Dimensions ZLay__DefaultMeasureText(ZLay_String text, void* user) {
   const float advance = 8.0f;
   const float line_h = 16.0f;
   return (ZLay_Dimensions){advance * (float)text.length, line_h};
-}
-
-uint32_t ZLay_Version(void) {
-  return ZLAY_VERSION;
-}
-
-const char* ZLay_VersionString(void) {
-  return ZLAY_VERSION_STRING;
 }
 
 const char* ZLay_LibraryName(void) {

@@ -8,9 +8,9 @@ extern "C" {
 #include <stddef.h>
 #include <stdint.h>
 
-#include "renderer/zlay_renderer.h"
-#include "zlay_antialiasing.h"
-#include "zlay.h"
+#include <renderer/zlay_renderer.h>
+#include <zlay_antialiasing.h>
+#include <zlay.h>
 
 typedef struct ZLay_GLVertex {
   float x;

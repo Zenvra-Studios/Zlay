@@ -1,4 +1,4 @@
-#include "os/libx11/zlay_impl_x11.h"
+#include <os/libx11/zlay_impl_x11.h>
 
 #include <time.h>
 
@@ -82,4 +82,3 @@ void ZLay_OS_NewFrame(ZLay_Context* ctx, const ZLay_OSFrameInfo* frame) {
   if (!frame) return;
   ZLay_ImplX11_NewFrame(ctx, frame->width, frame->height);
 }
-

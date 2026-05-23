@@ -5,7 +5,7 @@
 extern "C" {
 #endif
 
-#include "os/zlay_os.h"
+#include <os/zlay_os.h>
 
 typedef struct ZLay_ImplWin32_InitInfo {
   void* hwnd;
@@ -25,4 +25,3 @@ ZLAY_API ZLay_OSStyleInfo ZLay_ImplWin32_GetStyleInfo(void);
 #endif
 
 #endif
-

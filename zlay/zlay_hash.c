@@ -1,4 +1,4 @@
-#include "zlay_internal.h"
+#include <zlay_internal.h>
 
 // Simple, stable 64-bit hash (FNV-1a).
 // SIMD acceleration can be added later without changing the public API.
@@ -24,4 +24,3 @@ ZLay_Id ZLay_IdFromCString(const char* cstr) {
   while (*p) ++p;
   return ZLay_IdFromString((ZLay_String){cstr, (uint32_t)(p - cstr), false});
 }
-

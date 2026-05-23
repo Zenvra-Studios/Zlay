@@ -7,7 +7,7 @@ extern "C" {
 
 #include <stdint.h>
 
-#include "zlay.h"
+#include <zlay.h>
 
 typedef enum ZLay_OSBackendType {
   ZLAY_OS_BACKEND_NULL = 0,

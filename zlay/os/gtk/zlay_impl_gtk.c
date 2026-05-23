@@ -1,4 +1,4 @@
-#include "os/gtk/zlay_impl_gtk.h"
+#include <os/gtk/zlay_impl_gtk.h>
 
 #include <time.h>
 
@@ -79,4 +79,3 @@ void ZLay_OS_NewFrame(ZLay_Context* ctx, const ZLay_OSFrameInfo* frame) {
   if (!frame) return;
   ZLay_ImplGTK_NewFrame(ctx, frame->width, frame->height);
 }
-
