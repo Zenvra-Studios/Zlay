@@ -16,7 +16,7 @@ static void ZLay__PushTextCommand(ZLay_Context* ctx, const ZLay_Node* n) {
   ZLay_RenderCommand* c = &ctx->commands[ctx->command_count++];
   c->type = ZLAY_CMD_TEXT;
   c->bounds = n->layout;
-  c->color = (ZLay_Color){255, 255, 255, 255};
+  c->color = n->style.text_color;
   c->radius = 0;
   c->z_index = n->style.z_index;
   c->text = n->text;

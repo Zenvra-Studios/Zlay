@@ -6,7 +6,6 @@ CompileFlags:
     - -Izlay
     - -Ibuild/debug/generated
     - -DZLAY_BUILDING
-    - -DZLAY_SHARED
 ---
 If:
   PathMatch: .*\.c

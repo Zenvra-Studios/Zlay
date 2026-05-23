@@ -2,11 +2,17 @@ cmake_minimum_required(VERSION 3.24)
 
 project(ZLay LANGUAGES C CXX)
 
+option(BUILD_SHARED_LIBS "Build ZLay as a shared library instead of static" ON)
 option(ZLAY_BUILD_EXAMPLES "Build ZLay examples" ON)
 option(ZLAY_BUILD_DRIVERS "Build OpenGL/Vulkan drivers (stubs by default)" ON)
 option(ZLAY_BUILD_OS "Build ZLay OS helpers (timer, etc.)" ON)
 option(ZLAY_BUILD_RENDERER "Build ZLay renderer abstraction" ON)
 option(ZLAY_BUILD_SHADERS "Build ZLay built-in shader sources" ON)
+set(ZLAY_HEADER_TEMPLATE_STYLE "ifndef" CACHE STRING "Default generated header style: ifndef, pragma_once, both")
+set_property(CACHE ZLAY_HEADER_TEMPLATE_STYLE PROPERTY STRINGS ifndef pragma_once both)
+set(ZLAY_HEADER_TEMPLATE_INCLUDE "zlay.h" CACHE STRING "Default include used by generated ZLay headers; empty disables the include")
+option(ZLAY_HEADER_TEMPLATE_EXTERN_C "Wrap generated ZLay headers with extern C guards" ON)
+set(ZLAY_NEW_HEADER_PATH "" CACHE FILEPATH "Header path used by the zlay_generate_header target")
 set(ZLAY_OS_BACKEND "auto" CACHE STRING "Platform backend: auto, x11, gtk, win32, winrt, cocoa")
 set_property(CACHE ZLAY_OS_BACKEND PROPERTY STRINGS auto x11 gtk win32 winrt cocoa)
 
@@ -38,10 +44,15 @@ list(REMOVE_ITEM ZLAY_CORE_HEADERS
 )
 list(SORT ZLAY_CORE_HEADERS)
 
-file(GLOB ZLAY_COMPONENT_HEADERS CONFIGURE_DEPENDS
-  ${ZLAY_SOURCE_DIR}/components/*.h
+file(GLOB ZLAY_UI_HEADERS CONFIGURE_DEPENDS
+  ${ZLAY_SOURCE_DIR}/ui/*.h
 )
-list(SORT ZLAY_COMPONENT_HEADERS)
+list(SORT ZLAY_UI_HEADERS)
+
+file(GLOB ZLAY_UI_SOURCES CONFIGURE_DEPENDS
+  ${ZLAY_SOURCE_DIR}/ui/*.c
+)
+list(SORT ZLAY_UI_SOURCES)
 
 file(GLOB ZLAY_RENDERER_SOURCES CONFIGURE_DEPENDS
   ${ZLAY_SOURCE_DIR}/renderer/*.c
@@ -119,7 +130,7 @@ if (ZLAY_BUILD_DRIVERS AND NOT ZLAY_BUILD_SHADERS)
   message(FATAL_ERROR "ZLAY_BUILD_DRIVERS requires ZLAY_BUILD_SHADERS because driver adapters use built-in shader sources")
 endif()
 
-add_library(zlay SHARED)
+add_library(zlay)
 add_library(zlay::zlay ALIAS zlay)
 
 target_compile_features(zlay PUBLIC c_std_11)
@@ -133,14 +144,26 @@ target_compile_definitions(zlay
   PRIVATE
     ZLAY_BUILDING
   PUBLIC
-    ZLAY_SHARED
+    $<$<BOOL:${BUILD_SHARED_LIBS}>:ZLAY_SHARED>
+)
+
+add_custom_target(zlay_generate_header
+  COMMAND ${CMAKE_COMMAND}
+    -DZLAY_HEADER_PATH=${ZLAY_NEW_HEADER_PATH}
+    -DZLAY_HEADER_GUARD_STYLE=${ZLAY_HEADER_TEMPLATE_STYLE}
+    -DZLAY_HEADER_INCLUDE=${ZLAY_HEADER_TEMPLATE_INCLUDE}
+    -DZLAY_HEADER_EXTERN_C=${ZLAY_HEADER_TEMPLATE_EXTERN_C}
+    -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/new_header.cmake
+  COMMENT "Generating a ZLay header from template"
+  VERBATIM
 )
 
 target_sources(zlay
   PRIVATE
     ${ZLAY_CORE_SOURCES}
     ${ZLAY_CORE_HEADERS}
-    ${ZLAY_COMPONENT_HEADERS}
+    ${ZLAY_UI_SOURCES}
+    ${ZLAY_UI_HEADERS}
 )
 
 target_include_directories(zlay
@@ -263,19 +286,42 @@ if (ZLAY_BUILD_EXAMPLES)
   target_include_directories(zlay_example_basic PRIVATE ${ZLAY_PUBLIC_INCLUDE_DIRS})
   target_link_libraries(zlay_example_basic PRIVATE zlay)
 
+  add_executable(zlay_example_basic_c example/basic_c/main.c)
+  target_compile_features(zlay_example_basic_c PRIVATE c_std_11)
+  target_include_directories(zlay_example_basic_c PRIVATE ${ZLAY_PUBLIC_INCLUDE_DIRS})
+  target_link_libraries(zlay_example_basic_c PRIVATE zlay)
+
+  find_package(X11 QUIET)
+  if (X11_FOUND)
+    add_executable(zlay_example_gui_x11
+      example/simply_gui/gui_x11.c
+      example/simply_gui/gui_x11.h
+    )
+    target_compile_features(zlay_example_gui_x11 PRIVATE c_std_11)
+    target_include_directories(zlay_example_gui_x11 PRIVATE ${ZLAY_PUBLIC_INCLUDE_DIRS} ${X11_INCLUDE_DIR})
+    target_link_libraries(zlay_example_gui_x11 PRIVATE zlay ${X11_LIBRARIES})
+  endif()
+
   if (TARGET zlay_driver_opengl)
     target_link_libraries(zlay_example_basic PRIVATE zlay_driver_opengl)
+    target_link_libraries(zlay_example_basic_c PRIVATE zlay_driver_opengl)
   endif()
 
   if (TARGET zlay_renderer)
     target_link_libraries(zlay_example_basic PRIVATE zlay_renderer)
+    target_link_libraries(zlay_example_basic_c PRIVATE zlay_renderer)
   endif()
 
   if (TARGET zlay_shaders)
     target_link_libraries(zlay_example_basic PRIVATE zlay_shaders)
+    target_link_libraries(zlay_example_basic_c PRIVATE zlay_shaders)
   endif()
 
   if (TARGET zlay_os)
     target_link_libraries(zlay_example_basic PRIVATE zlay_os)
+    target_link_libraries(zlay_example_basic_c PRIVATE zlay_os)
+    if (TARGET zlay_example_gui_x11)
+      target_link_libraries(zlay_example_gui_x11 PRIVATE zlay_os)
+    endif()
   endif()
 endif()

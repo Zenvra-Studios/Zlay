@@ -1,0 +1,68 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "ZLay: Generate Current Header",
+      "type": "shell",
+      "command": "cmake",
+      "args": [
+        "-DZLAY_HEADER_PATH=${file}",
+        "-DZLAY_HEADER_GUARD_STYLE=${input:zlayHeaderGuardStyle}",
+        "-DZLAY_HEADER_INCLUDE=${input:zlayHeaderInclude}",
+        "-DZLAY_HEADER_EXTERN_C=${input:zlayHeaderExternC}",
+        "-P",
+        "${workspaceFolder}/cmake/new_header.cmake"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "ZLay: Generate Header By Path",
+      "type": "shell",
+      "command": "cmake",
+      "args": [
+        "-DZLAY_HEADER_PATH=${input:zlayHeaderPath}",
+        "-DZLAY_HEADER_GUARD_STYLE=${input:zlayHeaderGuardStyle}",
+        "-DZLAY_HEADER_INCLUDE=${input:zlayHeaderInclude}",
+        "-DZLAY_HEADER_EXTERN_C=${input:zlayHeaderExternC}",
+        "-P",
+        "${workspaceFolder}/cmake/new_header.cmake"
+      ],
+      "problemMatcher": []
+    }
+  ],
+  "inputs": [
+    {
+      "id": "zlayHeaderPath",
+      "type": "promptString",
+      "description": "Header path to generate",
+      "default": "zlay/new_header.h"
+    },
+    {
+      "id": "zlayHeaderGuardStyle",
+      "type": "pickString",
+      "description": "Header guard style",
+      "options": [
+        "ifndef",
+        "pragma_once",
+        "both"
+      ],
+      "default": "ifndef"
+    },
+    {
+      "id": "zlayHeaderInclude",
+      "type": "promptString",
+      "description": "Default include; leave empty for none",
+      "default": "zlay.h"
+    },
+    {
+      "id": "zlayHeaderExternC",
+      "type": "pickString",
+      "description": "Wrap with extern C guards",
+      "options": [
+        "ON",
+        "OFF"
+      ],
+      "default": "ON"
+    }
+  ]
+}

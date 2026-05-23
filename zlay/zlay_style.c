@@ -43,6 +43,7 @@ ZLay_Style ZLay_StyleDefault(void) {
   s.z_index = 0;
 
   s.background = (ZLay_Color){0, 0, 0, 0};
+  s.text_color = (ZLay_Color){255, 255, 255, 255};
   s.radius = 0;
   return s;
 }

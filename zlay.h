@@ -18,6 +18,8 @@ extern "C" {
 #include <stddef.h>
 #include <stdint.h>
 
+#include <zlay_math.h>
+
 // -----------------------------
 // C standard detection
 // -----------------------------
@@ -173,17 +175,18 @@ extern "C" {
 // -----------------------------
 
 #ifndef ZLAY_API
+#   define ZLAY_API
 #   if defined(ZLAY_SHARED) && ZLAY_PLATFORM_WINDOWS
+#     undef ZLAY_API
 #     if defined(ZLAY_BUILDING)
 #       define ZLAY_API __declspec(dllexport)
 #     else
 #       define ZLAY_API __declspec(dllimport)
 #     endif
-#   elif defined(ZLAY_SHARED) && (defined(__GNUC__) || defined(__clang__))
+#  elif defined(ZLAY_SHARED) && (defined(__GNUC__) || defined(__clang__))
+#     undef ZLAY_API
 #     define ZLAY_API __attribute__((visibility("default")))
-#   else
-#     define ZLAY_API
-#   endif
+#  endif
 #endif
 
 #define ZLAY_STRING_LITERAL(str_lit) \
@@ -192,32 +195,9 @@ extern "C" {
 #define ZLAY_ID(str_lit) ZLay_IdFromString(ZLAY_STRING_LITERAL(str_lit))
 
 // -----------------------------
-// Common types
+// String
+// Math, geometry, and color primitives live in zlay_math.h.
 // -----------------------------
-
-typedef struct ZLay_Vec2 {
-  float x;
-  float y;
-} ZLay_Vec2;
-
-typedef struct ZLay_Dimensions {
-  float width;
-  float height;
-} ZLay_Dimensions;
-
-typedef struct ZLay_Rect {
-  float x;
-  float y;
-  float width;
-  float height;
-} ZLay_Rect;
-
-typedef struct ZLay_Color {
-  uint8_t r;
-  uint8_t g;
-  uint8_t b;
-  uint8_t a;
-} ZLay_Color;
 
 typedef struct ZLay_String {
   const char* chars;
@@ -306,6 +286,7 @@ typedef struct ZLay_Style {
   int32_t z_index;
 
   ZLay_Color background;
+  ZLay_Color text_color;
   float radius;
 } ZLay_Style;
 

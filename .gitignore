@@ -1,5 +1,6 @@
 /.cache/
-/.vscode/
+/.vscode/*
+!/.vscode/tasks.json
 
 compile_commands.json
 __pycache__/
@@ -10,4 +11,3 @@ __pycache__/
 *.pyc
 *.exe
 *.out
-
