@@ -18,13 +18,6 @@ extern "C" {
 #include <stddef.h>
 #include <stdint.h>
 
-#define ZLAY_VERSION_MAJOR 0
-#define ZLAY_VERSION_MINOR 1
-#define ZLAY_VERSION_PATCH 0
-#define ZLAY_VERSION_STRING "0.1.0"
-#define ZLAY_MAKE_VERSION(major, minor, patch) (((major) * 10000) + ((minor) * 100) + (patch))
-#define ZLAY_VERSION ZLAY_MAKE_VERSION(ZLAY_VERSION_MAJOR, ZLAY_VERSION_MINOR, ZLAY_VERSION_PATCH)
-
 // -----------------------------
 // Platform detection
 // -----------------------------
@@ -54,113 +47,128 @@ extern "C" {
 #define ZLAY_PLATFORM_UNIX 0
 
 #if defined(_WIN64)
-  #undef ZLAY_PLATFORM_WINDOWS
-  #define ZLAY_PLATFORM_WINDOWS 1
-  #undef ZLAY_PLATFORM_WIN64
-  #define ZLAY_PLATFORM_WIN64 1
+#   undef ZLAY_PLATFORM_WINDOWS
+#   define ZLAY_PLATFORM_WINDOWS 1
+#   undef ZLAY_PLATFORM_WIN64
+#   define ZLAY_PLATFORM_WIN64 1
 #elif defined(_WIN32)
-  #undef ZLAY_PLATFORM_WINDOWS
-  #define ZLAY_PLATFORM_WINDOWS 1
-  #undef ZLAY_PLATFORM_WIN32
-  #define ZLAY_PLATFORM_WIN32 1
+#   undef ZLAY_PLATFORM_WINDOWS
+#   define ZLAY_PLATFORM_WINDOWS 1
+#   undef ZLAY_PLATFORM_WIN32
+#   define ZLAY_PLATFORM_WIN32 1
 #elif defined(__CYGWIN__)
-  #undef ZLAY_PLATFORM_CYGWIN
-  #define ZLAY_PLATFORM_CYGWIN 1
+#   undef ZLAY_PLATFORM_CYGWIN
+#   define ZLAY_PLATFORM_CYGWIN 1
 #elif defined(__EMSCRIPTEN__)
-  #undef ZLAY_PLATFORM_EMSCRIPTEN
-  #define ZLAY_PLATFORM_EMSCRIPTEN 1
+#   undef ZLAY_PLATFORM_EMSCRIPTEN
+#   define ZLAY_PLATFORM_EMSCRIPTEN 1
 #elif defined(__APPLE__) && defined(__MACH__)
-  #include <TargetConditionals.h>
-  #undef ZLAY_PLATFORM_APPLE
-  #define ZLAY_PLATFORM_APPLE 1
-  #if defined(TARGET_OS_VISION) && TARGET_OS_VISION
-    #undef ZLAY_PLATFORM_VISIONOS
-    #define ZLAY_PLATFORM_VISIONOS 1
-  #elif defined(TARGET_OS_TV) && TARGET_OS_TV
-    #undef ZLAY_PLATFORM_TVOS
-    #define ZLAY_PLATFORM_TVOS 1
-  #elif defined(TARGET_OS_WATCH) && TARGET_OS_WATCH
-    #undef ZLAY_PLATFORM_WATCHOS
-    #define ZLAY_PLATFORM_WATCHOS 1
-  #elif defined(TARGET_OS_MACCATALYST) && TARGET_OS_MACCATALYST
-    #undef ZLAY_PLATFORM_MACCATALYST
-    #define ZLAY_PLATFORM_MACCATALYST 1
-  #elif defined(TARGET_OS_IOS) && TARGET_OS_IOS
-    #undef ZLAY_PLATFORM_IOS
-    #define ZLAY_PLATFORM_IOS 1
-  #elif defined(TARGET_OS_IPHONE) && TARGET_OS_IPHONE
-    #undef ZLAY_PLATFORM_IOS
-    #define ZLAY_PLATFORM_IOS 1
-  #else
-    #undef ZLAY_PLATFORM_MACOS
-    #define ZLAY_PLATFORM_MACOS 1
-  #endif
+#   include <TargetConditionals.h>
+#   undef ZLAY_PLATFORM_APPLE
+#   define ZLAY_PLATFORM_APPLE 1
+#   if defined(TARGET_OS_VISION) && TARGET_OS_VISION
+#     undef ZLAY_PLATFORM_VISIONOS
+#     define ZLAY_PLATFORM_VISIONOS 1
+#   elif defined(TARGET_OS_TV) && TARGET_OS_TV
+#     undef ZLAY_PLATFORM_TVOS
+#     define ZLAY_PLATFORM_TVOS 1
+#   elif defined(TARGET_OS_WATCH) && TARGET_OS_WATCH
+#     undef ZLAY_PLATFORM_WATCHOS
+#     define ZLAY_PLATFORM_WATCHOS 1
+#   elif defined(TARGET_OS_MACCATALYST) && TARGET_OS_MACCATALYST
+#     undef ZLAY_PLATFORM_MACCATALYST
+#     define ZLAY_PLATFORM_MACCATALYST 1
+#   elif defined(TARGET_OS_IOS) && TARGET_OS_IOS
+#     undef ZLAY_PLATFORM_IOS
+#     define ZLAY_PLATFORM_IOS 1
+#   elif defined(TARGET_OS_IPHONE) && TARGET_OS_IPHONE
+#     undef ZLAY_PLATFORM_IOS
+#     define ZLAY_PLATFORM_IOS 1
+#   else
+#     undef ZLAY_PLATFORM_MACOS
+#     define ZLAY_PLATFORM_MACOS 1
+#   endif
 #elif defined(__ANDROID__)
-  #undef ZLAY_PLATFORM_ANDROID
-  #define ZLAY_PLATFORM_ANDROID 1
+#   undef ZLAY_PLATFORM_ANDROID
+#   define ZLAY_PLATFORM_ANDROID 1
 #elif defined(__linux__)
-  #undef ZLAY_PLATFORM_LINUX
-  #define ZLAY_PLATFORM_LINUX 1
+#   undef ZLAY_PLATFORM_LINUX
+#   define ZLAY_PLATFORM_LINUX 1
 #elif defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
-  #undef ZLAY_PLATFORM_FREEBSD
-  #define ZLAY_PLATFORM_FREEBSD 1
-  #undef ZLAY_PLATFORM_BSD
-  #define ZLAY_PLATFORM_BSD 1
+#   undef ZLAY_PLATFORM_FREEBSD
+#   define ZLAY_PLATFORM_FREEBSD 1
+#   undef ZLAY_PLATFORM_BSD
+#   define ZLAY_PLATFORM_BSD 1
 #elif defined(__OpenBSD__)
-  #undef ZLAY_PLATFORM_OPENBSD
-  #define ZLAY_PLATFORM_OPENBSD 1
-  #undef ZLAY_PLATFORM_BSD
-  #define ZLAY_PLATFORM_BSD 1
+#   undef ZLAY_PLATFORM_OPENBSD
+#   define ZLAY_PLATFORM_OPENBSD 1
+#   undef ZLAY_PLATFORM_BSD
+#   define ZLAY_PLATFORM_BSD 1
 #elif defined(__NetBSD__)
-  #undef ZLAY_PLATFORM_NETBSD
-  #define ZLAY_PLATFORM_NETBSD 1
-  #undef ZLAY_PLATFORM_BSD
-  #define ZLAY_PLATFORM_BSD 1
+#   undef ZLAY_PLATFORM_NETBSD
+#   define ZLAY_PLATFORM_NETBSD 1
+#   undef ZLAY_PLATFORM_BSD
+#   define ZLAY_PLATFORM_BSD 1
 #elif defined(__DragonFly__)
-  #undef ZLAY_PLATFORM_DRAGONFLYBSD
-  #define ZLAY_PLATFORM_DRAGONFLYBSD 1
-  #undef ZLAY_PLATFORM_BSD
-  #define ZLAY_PLATFORM_BSD 1
+#   undef ZLAY_PLATFORM_DRAGONFLYBSD
+#   define ZLAY_PLATFORM_DRAGONFLYBSD 1
+#   undef ZLAY_PLATFORM_BSD
+#   define ZLAY_PLATFORM_BSD 1
 #elif defined(__sun) && defined(__SVR4)
-  #undef ZLAY_PLATFORM_SOLARIS
-  #define ZLAY_PLATFORM_SOLARIS 1
+#   undef ZLAY_PLATFORM_SOLARIS
+#   define ZLAY_PLATFORM_SOLARIS 1
 #elif defined(__HAIKU__)
-  #undef ZLAY_PLATFORM_HAIKU
-  #define ZLAY_PLATFORM_HAIKU 1
+#   undef ZLAY_PLATFORM_HAIKU
+#   define ZLAY_PLATFORM_HAIKU 1
 #endif
 
 #if ZLAY_PLATFORM_APPLE || ZLAY_PLATFORM_ANDROID || ZLAY_PLATFORM_LINUX || ZLAY_PLATFORM_BSD || ZLAY_PLATFORM_SOLARIS || ZLAY_PLATFORM_HAIKU || ZLAY_PLATFORM_CYGWIN
-  #undef ZLAY_PLATFORM_UNIX
-  #define ZLAY_PLATFORM_UNIX 1
+#   undef ZLAY_PLATFORM_UNIX
+#   define ZLAY_PLATFORM_UNIX 1
 #endif
 
 #if !(ZLAY_PLATFORM_WINDOWS || ZLAY_PLATFORM_APPLE || ZLAY_PLATFORM_ANDROID || ZLAY_PLATFORM_LINUX || ZLAY_PLATFORM_BSD || ZLAY_PLATFORM_SOLARIS || ZLAY_PLATFORM_HAIKU || ZLAY_PLATFORM_CYGWIN || ZLAY_PLATFORM_EMSCRIPTEN)
-  #undef ZLAY_PLATFORM_UNKNOWN
-  #define ZLAY_PLATFORM_UNKNOWN 1
+#   undef ZLAY_PLATFORM_UNKNOWN
+#   define ZLAY_PLATFORM_UNKNOWN 1
 #endif
+
+#if defined(__cplusplus)
+#   define ZLAY_BOX(...) (ZLay_NodeDeclarationBuilder{ .decl = ZLay_NodeDeclaration{ .type = ZLAY_NODE_BOX, __VA_ARGS__ } })
+#   define ZLAY_TEXT_NODE(...) (ZLay_NodeDeclarationBuilder{ .decl = ZLay_NodeDeclaration{ .type = ZLAY_NODE_TEXT, __VA_ARGS__ } })
+#else
+#   define ZLAY_BOX(...) ((ZLay_NodeDeclarationBuilder){ .decl = (ZLay_NodeDeclaration){ .type = ZLAY_NODE_BOX, __VA_ARGS__ } })
+#   define ZLAY_TEXT_NODE(...) ((ZLay_NodeDeclarationBuilder){ .decl = (ZLay_NodeDeclaration){ .type = ZLAY_NODE_TEXT, __VA_ARGS__ } })
+#endif
+
+#define ZLAY(ctx, id, builder_expr) \
+  for (ZLay_NodeDeclarationBuilder ZLAY__builder = (builder_expr), *ZLAY__builder_ptr = &ZLAY__builder; ZLAY__builder_ptr; ZLAY__builder_ptr = 0) \
+    for (int ZLAY__once = (ZLay__OpenElement((ctx), (id), ZLAY__builder.decl.type), ZLay__ConfigureOpenElement((ctx), &ZLAY__builder.decl), 0); ZLAY__once == 0; ZLAY__once = (ZLay__CloseElement((ctx)), 1))
+
+#define ZLAY_TEXT(ctx, id, text, style_ptr) \
+  do { ZLay__OpenTextElement((ctx), (id), (text), (style_ptr)); } while (0)
 
 // -----------------------------
 // DLL export
 // -----------------------------
 
 #ifndef ZLAY_API
-  #if defined(ZLAY_SHARED) && ZLAY_PLATFORM_WINDOWS
-    #if defined(ZLAY_BUILDING)
-      #define ZLAY_API __declspec(dllexport)
-    #else
-      #define ZLAY_API __declspec(dllimport)
-    #endif
-  #elif defined(ZLAY_SHARED) && (defined(__GNUC__) || defined(__clang__))
-    #define ZLAY_API __attribute__((visibility("default")))
-  #else
-    #define ZLAY_API
-  #endif
+#   if defined(ZLAY_SHARED) && ZLAY_PLATFORM_WINDOWS
+#     if defined(ZLAY_BUILDING)
+#       define ZLAY_API __declspec(dllexport)
+#     else
+#       define ZLAY_API __declspec(dllimport)
+#     endif
+#   elif defined(ZLAY_SHARED) && (defined(__GNUC__) || defined(__clang__))
+#     define ZLAY_API __attribute__((visibility("default")))
+#   else
+#     define ZLAY_API
+#   endif
 #endif
 
-ZLAY_API uint32_t ZLay_Version(void);
-ZLAY_API const char* ZLay_VersionString(void);
-ZLAY_API const char* ZLay_LibraryName(void);
-ZLAY_API const char* ZLay_VendorName(void);
+#define ZLAY_STRING_LITERAL(str_lit) \
+  ((ZLay_String){ (str_lit), (uint32_t)(sizeof(str_lit) - 1u), true })
+  
+#define ZLAY_ID(str_lit) ZLay_IdFromString(ZLAY_STRING_LITERAL(str_lit))
 
 // -----------------------------
 // Common types
@@ -196,9 +204,6 @@ typedef struct ZLay_String {
   bool is_static;
 } ZLay_String;
 
-#define ZLAY_STRING_LITERAL(str_lit) \
-  ((ZLay_String){ (str_lit), (uint32_t)(sizeof(str_lit) - 1u), true })
-
 // -----------------------------
 // ID
 // -----------------------------
@@ -207,10 +212,6 @@ typedef struct ZLay_Id {
   uint64_t hash;
 } ZLay_Id;
 
-ZLAY_API ZLay_Id ZLay_IdFromString(ZLay_String s);
-ZLAY_API ZLay_Id ZLay_IdFromCString(const char* cstr);
-
-#define ZLAY_ID(str_lit) ZLay_IdFromString(ZLAY_STRING_LITERAL(str_lit))
 
 // -----------------------------
 // Arena
@@ -222,10 +223,6 @@ typedef struct ZLay_Arena {
   size_t offset;
 } ZLay_Arena;
 
-ZLAY_API ZLay_Arena ZLay_CreateArenaWithCapacityAndMemory(size_t capacity, void* memory);
-ZLAY_API void ZLay_ArenaReset(ZLay_Arena* arena);
-ZLAY_API void* ZLay_ArenaAlloc(ZLay_Arena* arena, size_t size, size_t alignment);
-
 // -----------------------------
 // Config
 // -----------------------------
@@ -235,9 +232,6 @@ typedef struct ZLay_Config {
   uint32_t max_commands;
   uint32_t max_stack;
 } ZLay_Config;
-
-ZLAY_API ZLay_Config ZLay_ConfigDefault(void);
-ZLAY_API size_t ZLay_MinMemorySize(ZLay_Config config);
 
 // -----------------------------
 // Style
@@ -294,11 +288,6 @@ typedef struct ZLay_Style {
   float radius;
 } ZLay_Style;
 
-ZLAY_API ZLay_Style ZLay_StyleDefault(void);
-ZLAY_API ZLay_Size ZLay_Px(float v);
-ZLAY_API ZLay_Size ZLay_Percent(float v);
-ZLAY_API ZLay_Size ZLay_Grow(float weight);
-
 // -----------------------------
 // Nodes / layout declaration
 // -----------------------------
@@ -326,49 +315,6 @@ typedef struct ZLay_RenderCommandList {
 
 typedef struct ZLay_Context ZLay_Context;
 
-ZLAY_API ZLay_Context* ZLay_Initialize(ZLay_Arena arena, ZLay_Config config);
-ZLAY_API void ZLay_SetLayoutDimensions(ZLay_Context* ctx, ZLay_Dimensions dims);
-
-typedef ZLay_Dimensions (*ZLay_MeasureTextFn)(ZLay_String text, void* user);
-ZLAY_API void ZLay_SetMeasureTextFunction(ZLay_Context* ctx, ZLay_MeasureTextFn fn, void* user);
-
-ZLAY_API void ZLay_BeginLayout(ZLay_Context* ctx);
-ZLAY_API ZLay_RenderCommandList ZLay_EndLayout(ZLay_Context* ctx);
-
-// Low-level open/config/close (used by macros)
-ZLAY_API void ZLay__OpenElement(ZLay_Context* ctx, ZLay_Id id, ZLay_NodeType type);
-ZLAY_API void ZLay__ConfigureOpenElement(ZLay_Context* ctx, const ZLay_NodeDeclaration* decl);
-ZLAY_API void ZLay__CloseElement(ZLay_Context* ctx);
-ZLAY_API void ZLay__OpenTextElement(ZLay_Context* ctx, ZLay_Id id, ZLay_String text, const ZLay_Style* style);
-
-// Declarative macro API (Clay-like)
-// Usage:
-//   ZLay_BeginLayout(ctx);
-//   ZLAY(ctx, ZLAY_ID("Root"), ZLAY_BOX(.style = ...)) { ... }
-//   ZLay_RenderCommandList cmds = ZLay_EndLayout(ctx);
-
-typedef struct ZLay_NodeDeclarationBuilder {
-  ZLay_NodeDeclaration decl;
-} ZLay_NodeDeclarationBuilder;
-
-// Helpers for macro-friendly struct init
-ZLAY_API ZLay_NodeDeclarationBuilder ZLay_BoxDecl(ZLay_Id id, ZLay_Style style);
-ZLAY_API ZLay_NodeDeclarationBuilder ZLay_TextDecl(ZLay_Id id, ZLay_String text, ZLay_Style style);
-
-#if defined(__cplusplus)
-  #define ZLAY_BOX(...) (ZLay_NodeDeclarationBuilder{ .decl = ZLay_NodeDeclaration{ .type = ZLAY_NODE_BOX, __VA_ARGS__ } })
-  #define ZLAY_TEXT_NODE(...) (ZLay_NodeDeclarationBuilder{ .decl = ZLay_NodeDeclaration{ .type = ZLAY_NODE_TEXT, __VA_ARGS__ } })
-#else
-  #define ZLAY_BOX(...) ((ZLay_NodeDeclarationBuilder){ .decl = (ZLay_NodeDeclaration){ .type = ZLAY_NODE_BOX, __VA_ARGS__ } })
-  #define ZLAY_TEXT_NODE(...) ((ZLay_NodeDeclarationBuilder){ .decl = (ZLay_NodeDeclaration){ .type = ZLAY_NODE_TEXT, __VA_ARGS__ } })
-#endif
-
-#define ZLAY(ctx, id, builder_expr) \
-  for (ZLay_NodeDeclarationBuilder ZLAY__builder = (builder_expr), *ZLAY__builder_ptr = &ZLAY__builder; ZLAY__builder_ptr; ZLAY__builder_ptr = 0) \
-    for (int ZLAY__once = (ZLay__OpenElement((ctx), (id), ZLAY__builder.decl.type), ZLay__ConfigureOpenElement((ctx), &ZLAY__builder.decl), 0); ZLAY__once == 0; ZLAY__once = (ZLay__CloseElement((ctx)), 1))
-
-#define ZLAY_TEXT(ctx, id, text, style_ptr) \
-  do { ZLay__OpenTextElement((ctx), (id), (text), (style_ptr)); } while (0)
 
 // -----------------------------
 // Render commands
@@ -389,6 +335,55 @@ struct ZLay_RenderCommand {
   int32_t z_index;
   ZLay_String text;
 };
+
+// Declarative macro API (Clay-like)
+// Usage:
+//   ZLay_BeginLayout(ctx);
+//   ZLAY(ctx, ZLAY_ID("Root"), ZLAY_BOX(.style = ...)) { ... }
+//   ZLay_RenderCommandList cmds = ZLay_EndLayout(ctx);
+
+typedef struct ZLay_NodeDeclarationBuilder {
+  ZLay_NodeDeclaration decl;
+} ZLay_NodeDeclarationBuilder;
+
+ZLAY_API uint32_t ZLay_Version(void);
+ZLAY_API const char* ZLay_VersionString(void);
+ZLAY_API const char* ZLay_LibraryName(void);
+ZLAY_API const char* ZLay_VendorName(void);
+
+ZLAY_API ZLay_Id ZLay_IdFromString(ZLay_String s);
+ZLAY_API ZLay_Id ZLay_IdFromCString(const char* cstr);
+
+ZLAY_API ZLay_Arena ZLay_CreateArenaWithCapacityAndMemory(size_t capacity, void* memory);
+ZLAY_API void ZLay_ArenaReset(ZLay_Arena* arena);
+ZLAY_API void* ZLay_ArenaAlloc(ZLay_Arena* arena, size_t size, size_t alignment);
+
+ZLAY_API ZLay_Config ZLay_ConfigDefault(void);
+ZLAY_API size_t ZLay_MinMemorySize(ZLay_Config config);
+
+ZLAY_API ZLay_Style ZLay_StyleDefault(void);
+ZLAY_API ZLay_Size ZLay_Px(float v);
+ZLAY_API ZLay_Size ZLay_Percent(float v);
+ZLAY_API ZLay_Size ZLay_Grow(float weight);
+
+ZLAY_API ZLay_Context* ZLay_Initialize(ZLay_Arena arena, ZLay_Config config);
+ZLAY_API void ZLay_SetLayoutDimensions(ZLay_Context* ctx, ZLay_Dimensions dims);
+
+typedef ZLay_Dimensions (*ZLay_MeasureTextFn)(ZLay_String text, void* user);
+ZLAY_API void ZLay_SetMeasureTextFunction(ZLay_Context* ctx, ZLay_MeasureTextFn fn, void* user);
+
+ZLAY_API void ZLay_BeginLayout(ZLay_Context* ctx);
+ZLAY_API ZLay_RenderCommandList ZLay_EndLayout(ZLay_Context* ctx);
+
+// Low-level open/config/close (used by macros)
+ZLAY_API void ZLay__OpenElement(ZLay_Context* ctx, ZLay_Id id, ZLay_NodeType type);
+ZLAY_API void ZLay__ConfigureOpenElement(ZLay_Context* ctx, const ZLay_NodeDeclaration* decl);
+ZLAY_API void ZLay__CloseElement(ZLay_Context* ctx);
+ZLAY_API void ZLay__OpenTextElement(ZLay_Context* ctx, ZLay_Id id, ZLay_String text, const ZLay_Style* style);
+
+// Helpers for macro-friendly struct init
+ZLAY_API ZLay_NodeDeclarationBuilder ZLay_BoxDecl(ZLay_Id id, ZLay_Style style);
+ZLAY_API ZLay_NodeDeclarationBuilder ZLay_TextDecl(ZLay_Id id, ZLay_String text, ZLay_Style style);
 
 #ifdef __cplusplus
 } // extern "C"

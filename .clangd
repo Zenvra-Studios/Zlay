@@ -1,0 +1,10 @@
+CompileFlags:
+  CompilationDatabase: build/debug
+  Add:
+    - -I.
+    - -Iinclude
+    - -Izlay
+    - -Ibuild/debug/generated
+    - -DZLAY_BUILDING
+    - -DZLAY_SHARED
+    - -std=gnu99
