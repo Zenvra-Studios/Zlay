@@ -1,4 +1,5 @@
 #include <os/gtk/zlay_impl_gtk.h>
+#include <zlay_os.h> 
 
 #include <time.h>
 
@@ -23,8 +24,20 @@ bool ZLay_ImplGTK_Init(const ZLay_ImplGTK_InitInfo* info) {
   return true;
 }
 
+bool ZLay_GTK_Init(const ZLay_GTKInitInfo* info) {
+  ZLay_ImplGTK_InitInfo impl;
+  impl.widget = info ? info->widget : 0;
+  impl.width = info ? info->width : 0;
+  impl.height = info ? info->height : 0;
+  return ZLay_ImplGTK_Init(&impl);
+}
+
 void ZLay_ImplGTK_Shutdown(void) {
   zlay_gtk_state = (ZLay_ImplGTK_State){0};
+}
+
+void ZLay_GTK_Shutdown(void) {
+  ZLay_ImplGTK_Shutdown();
 }
 
 void ZLay_ImplGTK_NewFrame(ZLay_Context* ctx, int32_t width, int32_t height) {
@@ -33,9 +46,17 @@ void ZLay_ImplGTK_NewFrame(ZLay_Context* ctx, int32_t width, int32_t height) {
   if (ctx) ZLay_SetLayoutDimensions(ctx, (ZLay_Dimensions){(float)width, (float)height});
 }
 
+void ZLay_GTK_NewFrame(ZLay_Context* ctx, int32_t width, int32_t height) {
+  ZLay_ImplGTK_NewFrame(ctx, width, height);
+}
+
 float ZLay_ImplGTK_GetDpiScale(void* widget) {
   (void)widget;
   return 1.0f;
+}
+
+float ZLay_GTK_GetDpiScale(void* widget) {
+  return ZLay_ImplGTK_GetDpiScale(widget);
 }
 
 ZLay_OSStyleInfo ZLay_ImplGTK_GetStyleInfo(void) {
@@ -49,6 +70,10 @@ ZLay_OSStyleInfo ZLay_ImplGTK_GetStyleInfo(void) {
     34.0f,
     "Adwaita Sans, Cantarell, Noto Sans"
   };
+}
+
+ZLay_OSStyleInfo ZLay_GTK_GetStyleInfo(void) {
+  return ZLay_ImplGTK_GetStyleInfo();
 }
 
 const char* ZLay_OS_BackendName(void) {

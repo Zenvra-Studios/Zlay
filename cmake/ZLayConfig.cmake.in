@@ -1,0 +1,32 @@
+@PACKAGE_INIT@
+
+include(CMakeFindDependencyMacro)
+include("${CMAKE_CURRENT_LIST_DIR}/ZLayTargets.cmake")
+
+set(ZLay_VERSION "@PROJECT_VERSION@")
+set_and_check(ZLay_INCLUDE_DIR "@PACKAGE_CMAKE_INSTALL_INCLUDEDIR@")
+set(ZLay_INCLUDE_DIRS "${ZLay_INCLUDE_DIR}" "${ZLay_INCLUDE_DIR}/zlay")
+set(ZLay_LIBRARIES zlay::zlay)
+set(ZLay_FOUND TRUE)
+
+set(ZLay_AVAILABLE_COMPONENTS "")
+foreach(_ZLay_component IN ITEMS core lifecycle parser renderer shaders driver_opengl driver_vulkan os)
+  if(TARGET "zlay::${_ZLay_component}")
+    list(APPEND ZLay_AVAILABLE_COMPONENTS "${_ZLay_component}")
+    set(ZLay_${_ZLay_component}_FOUND TRUE)
+  endif()
+endforeach()
+
+foreach(_ZLay_component IN LISTS ZLay_FIND_COMPONENTS)
+  if(TARGET "zlay::${_ZLay_component}")
+    set(ZLay_${_ZLay_component}_FOUND TRUE)
+  else()
+    set(ZLay_${_ZLay_component}_FOUND FALSE)
+  endif()
+endforeach()
+
+check_required_components(ZLay)
+
+set(ZLAY_FOUND "${ZLay_FOUND}")
+set(ZLAY_INCLUDE_DIRS "${ZLay_INCLUDE_DIRS}")
+set(ZLAY_LIBRARIES "${ZLay_LIBRARIES}")

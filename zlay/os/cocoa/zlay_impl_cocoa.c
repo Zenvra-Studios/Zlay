@@ -1,4 +1,5 @@
 #include <os/cocoa/zlay_impl_cocoa.h>
+#include <zlay_os.h>
 
 #include <mach/mach_time.h>
 
@@ -26,8 +27,21 @@ bool ZLay_ImplCocoa_Init(const ZLay_ImplCocoa_InitInfo* info) {
   return true;
 }
 
+bool ZLay_Cocoa_Init(const ZLay_CocoaInitInfo* info) {
+  ZLay_ImplCocoa_InitInfo impl;
+  impl.ns_window = info ? info->ns_window : 0;
+  impl.ns_view = info ? info->ns_view : 0;
+  impl.width = info ? info->width : 0;
+  impl.height = info ? info->height : 0;
+  return ZLay_ImplCocoa_Init(&impl);
+}
+
 void ZLay_ImplCocoa_Shutdown(void) {
   zlay_cocoa_state = (ZLay_ImplCocoa_State){0};
+}
+
+void ZLay_Cocoa_Shutdown(void) {
+  ZLay_ImplCocoa_Shutdown();
 }
 
 void ZLay_ImplCocoa_NewFrame(ZLay_Context* ctx, int32_t width, int32_t height) {
@@ -36,9 +50,17 @@ void ZLay_ImplCocoa_NewFrame(ZLay_Context* ctx, int32_t width, int32_t height) {
   if (ctx) ZLay_SetLayoutDimensions(ctx, (ZLay_Dimensions){(float)width, (float)height});
 }
 
+void ZLay_Cocoa_NewFrame(ZLay_Context* ctx, int32_t width, int32_t height) {
+  ZLay_ImplCocoa_NewFrame(ctx, width, height);
+}
+
 float ZLay_ImplCocoa_GetDpiScale(void* ns_view) {
   (void)ns_view;
   return 1.0f;
+}
+
+float ZLay_Cocoa_GetDpiScale(void* ns_view) {
+  return ZLay_ImplCocoa_GetDpiScale(ns_view);
 }
 
 ZLay_OSStyleInfo ZLay_ImplCocoa_GetStyleInfo(void) {
@@ -52,6 +74,10 @@ ZLay_OSStyleInfo ZLay_ImplCocoa_GetStyleInfo(void) {
     30.0f,
     "SF Pro, Helvetica Neue"
   };
+}
+
+ZLay_OSStyleInfo ZLay_Cocoa_GetStyleInfo(void) {
+  return ZLay_ImplCocoa_GetStyleInfo();
 }
 
 const char* ZLay_OS_BackendName(void) {

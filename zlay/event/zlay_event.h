@@ -7,5 +7,5 @@
 #include <event/zlay_messagebox.h>
 #include <event/zlay_network.h>
 #include <event/zlay_gpu_driver.h>
-#include <event/zlay_runtime.h>
+#include <zlay_runtime.h>
 #include <event/zlay_effect.h>

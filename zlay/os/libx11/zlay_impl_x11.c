@@ -1,4 +1,5 @@
 #include <os/libx11/zlay_impl_x11.h>
+#include  <zlay_os.h>
 
 #include <time.h>
 
@@ -25,8 +26,21 @@ bool ZLay_ImplX11_Init(const ZLay_ImplX11_InitInfo* info) {
   return true;
 }
 
+bool ZLay_X11_Init(const ZLay_X11InitInfo* info) {
+  ZLay_ImplX11_InitInfo impl;
+  impl.display = info ? info->display : 0;
+  impl.window = info ? info->window : 0;
+  impl.width = info ? info->width : 0;
+  impl.height = info ? info->height : 0;
+  return ZLay_ImplX11_Init(&impl);
+}
+
 void ZLay_ImplX11_Shutdown(void) {
   zlay_x11_state = (ZLay_ImplX11_State){0};
+}
+
+void ZLay_X11_Shutdown(void) {
+  ZLay_ImplX11_Shutdown();
 }
 
 void ZLay_ImplX11_NewFrame(ZLay_Context* ctx, int32_t width, int32_t height) {
@@ -35,9 +49,17 @@ void ZLay_ImplX11_NewFrame(ZLay_Context* ctx, int32_t width, int32_t height) {
   if (ctx) ZLay_SetLayoutDimensions(ctx, (ZLay_Dimensions){(float)width, (float)height});
 }
 
+void ZLay_X11_NewFrame(ZLay_Context* ctx, int32_t width, int32_t height) {
+  ZLay_ImplX11_NewFrame(ctx, width, height);
+}
+
 float ZLay_ImplX11_GetDpiScale(void* display) {
   (void)display;
   return 1.0f;
+}
+
+float ZLay_X11_GetDpiScale(void* display) {
+  return ZLay_ImplX11_GetDpiScale(display);
 }
 
 ZLay_OSStyleInfo ZLay_ImplX11_GetStyleInfo(void) {
@@ -51,6 +73,10 @@ ZLay_OSStyleInfo ZLay_ImplX11_GetStyleInfo(void) {
     32.0f,
     "Inter, Noto Sans, DejaVu Sans"
   };
+}
+
+ZLay_OSStyleInfo ZLay_X11_GetStyleInfo(void) {
+  return ZLay_ImplX11_GetStyleInfo();
 }
 
 const char* ZLay_OS_BackendName(void) {

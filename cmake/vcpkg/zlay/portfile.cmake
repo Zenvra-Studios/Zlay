@@ -1,0 +1,46 @@
+get_filename_component(SOURCE_PATH "${CURRENT_PORT_DIR}/../../.." ABSOLUTE)
+
+vcpkg_check_features(
+  OUT_FEATURE_OPTIONS FEATURE_OPTIONS
+  FEATURES
+    drivers  ZLAY_BUILD_DRIVERS
+    lifecycle ZLAY_BUILD_LIFECYCLE
+    os       ZLAY_BUILD_OS
+    parser   ZLAY_BUILD_PARSER
+    renderer ZLAY_BUILD_RENDERER
+    shaders  ZLAY_BUILD_SHADERS
+)
+
+if("drivers" IN_LIST FEATURES)
+  list(APPEND FEATURE_OPTIONS
+    -DZLAY_BUILD_RENDERER=ON
+    -DZLAY_BUILD_SHADERS=ON
+  )
+endif()
+
+vcpkg_cmake_configure(
+  SOURCE_PATH "${SOURCE_PATH}"
+  OPTIONS
+    -DZLAY_BUILD_EXAMPLES=OFF
+    -DZLAY_BUILD_DRIVERS=OFF
+    -DZLAY_BUILD_LIFECYCLE=OFF
+    -DZLAY_BUILD_OS=OFF
+    -DZLAY_BUILD_PARSER=OFF
+    -DZLAY_BUILD_RENDERER=OFF
+    -DZLAY_BUILD_SHADERS=OFF
+    ${FEATURE_OPTIONS}
+)
+
+vcpkg_cmake_install()
+vcpkg_cmake_config_fixup(PACKAGE_NAME ZLay CONFIG_PATH lib/cmake/ZLay)
+
+file(REMOVE_RECURSE
+  "${CURRENT_PACKAGES_DIR}/debug/include"
+  "${CURRENT_PACKAGES_DIR}/debug/share"
+)
+
+file(INSTALL
+  "${CURRENT_PORT_DIR}/copyright"
+  DESTINATION "${CURRENT_PACKAGES_DIR}/share/${PORT}"
+  RENAME copyright
+)

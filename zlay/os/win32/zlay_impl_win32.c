@@ -1,4 +1,5 @@
 #include <os/win32/zlay_impl_win32.h>
+#include <zlay_os.h> 
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -30,14 +31,30 @@ bool ZLay_ImplWin32_Init(const ZLay_ImplWin32_InitInfo* info) {
   return true;
 }
 
+bool ZLay_Win32_Init(const ZLay_Win32InitInfo* info) {
+  ZLay_ImplWin32_InitInfo impl;
+  impl.hwnd = info ? info->hwnd : 0;
+  impl.width = info ? info->width : 0;
+  impl.height = info ? info->height : 0;
+  return ZLay_ImplWin32_Init(&impl);
+}
+
 void ZLay_ImplWin32_Shutdown(void) {
   zlay_win32_state = (ZLay_ImplWin32_State){0};
+}
+
+void ZLay_Win32_Shutdown(void) {
+  ZLay_ImplWin32_Shutdown();
 }
 
 void ZLay_ImplWin32_NewFrame(ZLay_Context* ctx, int32_t width, int32_t height) {
   zlay_win32_state.width = width;
   zlay_win32_state.height = height;
   if (ctx) ZLay_SetLayoutDimensions(ctx, (ZLay_Dimensions){(float)width, (float)height});
+}
+
+void ZLay_Win32_NewFrame(ZLay_Context* ctx, int32_t width, int32_t height) {
+  ZLay_ImplWin32_NewFrame(ctx, width, height);
 }
 
 void ZLay_ImplWin32_EnableDpiAwareness(void) {
@@ -47,6 +64,10 @@ void ZLay_ImplWin32_EnableDpiAwareness(void) {
   ZLay_SetProcessDPIAwareFn set_process_dpi_aware = (ZLay_SetProcessDPIAwareFn)GetProcAddress(user32, "SetProcessDPIAware");
   if (set_process_dpi_aware) set_process_dpi_aware();
   FreeLibrary(user32);
+}
+
+void ZLay_Win32_EnableDpiAwareness(void) {
+  ZLay_ImplWin32_EnableDpiAwareness();
 }
 
 float ZLay_ImplWin32_GetDpiScaleForHwnd(void* hwnd) {
@@ -63,6 +84,10 @@ float ZLay_ImplWin32_GetDpiScaleForHwnd(void* hwnd) {
   return 1.0f;
 }
 
+float ZLay_Win32_GetDpiScaleForHwnd(void* hwnd) {
+  return ZLay_ImplWin32_GetDpiScaleForHwnd(hwnd);
+}
+
 ZLay_OSStyleInfo ZLay_ImplWin32_GetStyleInfo(void) {
   return (ZLay_OSStyleInfo){
     ZLAY_OS_THEME_DARK,
@@ -74,6 +99,10 @@ ZLay_OSStyleInfo ZLay_ImplWin32_GetStyleInfo(void) {
     32.0f,
     "Segoe UI Variable, Segoe UI"
   };
+}
+
+ZLay_OSStyleInfo ZLay_Win32_GetStyleInfo(void) {
+  return ZLay_ImplWin32_GetStyleInfo();
 }
 
 const char* ZLay_OS_BackendName(void) {

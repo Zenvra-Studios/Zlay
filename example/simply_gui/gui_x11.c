@@ -1,4 +1,4 @@
-#include "gui_x11.h"
+#include <simply_gui/gui_x11.h>
 
 #include <stdint.h>
 #include <stdio.h>

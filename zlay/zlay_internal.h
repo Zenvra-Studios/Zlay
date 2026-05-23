@@ -30,6 +30,7 @@ struct ZLay_Context {
   ZLay_Dimensions viewport;
 
   ZLay_Arena arena;
+  size_t frame_arena_offset;
 
   ZLay_MeasureTextFn measure_text;
   void* measure_text_user;

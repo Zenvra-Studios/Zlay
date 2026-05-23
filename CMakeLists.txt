@@ -1,11 +1,15 @@
 cmake_minimum_required(VERSION 3.24)
 
-project(ZLay LANGUAGES C CXX)
+project(ZLay VERSION 0.1.0 LANGUAGES C CXX)
+
+include(GNUInstallDirs)
 
 option(BUILD_SHARED_LIBS "Build ZLay as a shared library instead of static" ON)
 option(ZLAY_BUILD_EXAMPLES "Build ZLay examples" ON)
 option(ZLAY_BUILD_DRIVERS "Build OpenGL/Vulkan drivers (stubs by default)" ON)
 option(ZLAY_BUILD_OS "Build ZLay OS helpers (timer, etc.)" ON)
+option(ZLAY_BUILD_LIFECYCLE "Build ZLay lifecycle, autosave, journal, and recovery helpers" ON)
+option(ZLAY_BUILD_PARSER "Build ZLay DSL parser frontend" ON)
 option(ZLAY_BUILD_RENDERER "Build ZLay renderer abstraction" ON)
 option(ZLAY_BUILD_SHADERS "Build ZLay built-in shader sources" ON)
 set(ZLAY_HEADER_TEMPLATE_STYLE "ifndef" CACHE STRING "Default generated header style: ifndef, pragma_once, both")
@@ -44,6 +48,16 @@ list(REMOVE_ITEM ZLAY_CORE_HEADERS
 )
 list(SORT ZLAY_CORE_HEADERS)
 
+file(GLOB ZLAY_CORE_MODULE_SOURCES CONFIGURE_DEPENDS
+  ${ZLAY_SOURCE_DIR}/core/*.c
+)
+list(SORT ZLAY_CORE_MODULE_SOURCES)
+
+file(GLOB ZLAY_CORE_MODULE_HEADERS CONFIGURE_DEPENDS
+  ${ZLAY_SOURCE_DIR}/core/*.h
+)
+list(SORT ZLAY_CORE_MODULE_HEADERS)
+
 file(GLOB ZLAY_UI_HEADERS CONFIGURE_DEPENDS
   ${ZLAY_SOURCE_DIR}/ui/*.h
 )
@@ -63,6 +77,34 @@ file(GLOB ZLAY_RENDERER_HEADERS CONFIGURE_DEPENDS
   ${ZLAY_SOURCE_DIR}/renderer/*.h
 )
 list(SORT ZLAY_RENDERER_HEADERS)
+
+file(GLOB ZLAY_LIFECYCLE_SOURCES CONFIGURE_DEPENDS
+  ${ZLAY_SOURCE_DIR}/lifecycle/*.c
+)
+list(SORT ZLAY_LIFECYCLE_SOURCES)
+
+file(GLOB ZLAY_LIFECYCLE_HEADERS CONFIGURE_DEPENDS
+  ${ZLAY_SOURCE_DIR}/lifecycle/*.h
+)
+list(SORT ZLAY_LIFECYCLE_HEADERS)
+
+file(GLOB_RECURSE ZLAY_PARSER_SOURCES CONFIGURE_DEPENDS
+  ${ZLAY_SOURCE_DIR}/parser/ast/*.c
+  ${ZLAY_SOURCE_DIR}/parser/lexer/*.c
+  ${ZLAY_SOURCE_DIR}/parser/resolver/*.c
+  ${ZLAY_SOURCE_DIR}/parser/semantic/*.c
+  ${ZLAY_SOURCE_DIR}/parser/syntax/*.c
+)
+list(SORT ZLAY_PARSER_SOURCES)
+
+file(GLOB_RECURSE ZLAY_PARSER_HEADERS CONFIGURE_DEPENDS
+  ${ZLAY_SOURCE_DIR}/parser/ast/*.h
+  ${ZLAY_SOURCE_DIR}/parser/lexer/*.h
+  ${ZLAY_SOURCE_DIR}/parser/resolver/*.h
+  ${ZLAY_SOURCE_DIR}/parser/semantic/*.h
+  ${ZLAY_SOURCE_DIR}/parser/syntax/*.h
+)
+list(SORT ZLAY_PARSER_HEADERS)
 
 file(GLOB ZLAY_DRIVER_OPENGL_SOURCES CONFIGURE_DEPENDS
   ${ZLAY_SOURCE_DIR}/driver/opengl/*.c
@@ -133,11 +175,19 @@ endif()
 add_library(zlay)
 add_library(zlay::zlay ALIAS zlay)
 
+add_library(zlay_core INTERFACE)
+add_library(zlay::core ALIAS zlay_core)
+set_target_properties(zlay_core PROPERTIES EXPORT_NAME core)
+target_link_libraries(zlay_core INTERFACE zlay)
+
 target_compile_features(zlay PUBLIC c_std_11)
 set_target_properties(zlay PROPERTIES
   C_STANDARD 11
   C_STANDARD_REQUIRED YES
+  EXPORT_NAME zlay
   POSITION_INDEPENDENT_CODE ON
+  SOVERSION ${PROJECT_VERSION_MAJOR}
+  VERSION ${PROJECT_VERSION}
 )
 
 target_compile_definitions(zlay
@@ -162,13 +212,19 @@ target_sources(zlay
   PRIVATE
     ${ZLAY_CORE_SOURCES}
     ${ZLAY_CORE_HEADERS}
+    ${ZLAY_CORE_MODULE_SOURCES}
+    ${ZLAY_CORE_MODULE_HEADERS}
     ${ZLAY_UI_SOURCES}
     ${ZLAY_UI_HEADERS}
 )
 
 target_include_directories(zlay
   PUBLIC
-    ${ZLAY_PUBLIC_INCLUDE_DIRS}
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<BUILD_INTERFACE:${ZLAY_SOURCE_DIR}>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/zlay>
 )
 
 if (MSVC)
@@ -177,12 +233,31 @@ else()
   target_compile_options(zlay PRIVATE -Wall -Wextra -Wpedantic)
 endif()
 
+if (ZLAY_BUILD_LIFECYCLE)
+  target_sources(zlay PRIVATE ${ZLAY_LIFECYCLE_SOURCES} ${ZLAY_LIFECYCLE_HEADERS})
+
+  add_library(zlay_lifecycle INTERFACE)
+  add_library(zlay::lifecycle ALIAS zlay_lifecycle)
+  set_target_properties(zlay_lifecycle PROPERTIES EXPORT_NAME lifecycle)
+  target_link_libraries(zlay_lifecycle INTERFACE zlay)
+endif()
+
 if (ZLAY_BUILD_RENDERER)
   target_sources(zlay PRIVATE ${ZLAY_RENDERER_SOURCES} ${ZLAY_RENDERER_HEADERS})
 
   add_library(zlay_renderer INTERFACE)
   add_library(zlay::renderer ALIAS zlay_renderer)
+  set_target_properties(zlay_renderer PROPERTIES EXPORT_NAME renderer)
   target_link_libraries(zlay_renderer INTERFACE zlay)
+endif()
+
+if (ZLAY_BUILD_PARSER)
+  target_sources(zlay PRIVATE ${ZLAY_PARSER_SOURCES} ${ZLAY_PARSER_HEADERS})
+
+  add_library(zlay_parser INTERFACE)
+  add_library(zlay::parser ALIAS zlay_parser)
+  set_target_properties(zlay_parser PROPERTIES EXPORT_NAME parser)
+  target_link_libraries(zlay_parser INTERFACE zlay)
 endif()
 
 if (ZLAY_BUILD_SHADERS)
@@ -229,6 +304,7 @@ if (ZLAY_BUILD_SHADERS)
 
   add_library(zlay_shaders INTERFACE)
   add_library(zlay::shaders ALIAS zlay_shaders)
+  set_target_properties(zlay_shaders PROPERTIES EXPORT_NAME shaders)
   target_link_libraries(zlay_shaders INTERFACE zlay)
 endif()
 
@@ -238,10 +314,12 @@ if (ZLAY_BUILD_DRIVERS)
 
   add_library(zlay_driver_opengl INTERFACE)
   add_library(zlay::driver_opengl ALIAS zlay_driver_opengl)
+  set_target_properties(zlay_driver_opengl PROPERTIES EXPORT_NAME driver_opengl)
   target_link_libraries(zlay_driver_opengl INTERFACE zlay)
 
   add_library(zlay_driver_vulkan INTERFACE)
   add_library(zlay::driver_vulkan ALIAS zlay_driver_vulkan)
+  set_target_properties(zlay_driver_vulkan PROPERTIES EXPORT_NAME driver_vulkan)
   target_link_libraries(zlay_driver_vulkan INTERFACE zlay)
 endif()
 
@@ -277,6 +355,7 @@ if (ZLAY_BUILD_OS)
 
   add_library(zlay_os INTERFACE)
   add_library(zlay::os ALIAS zlay_os)
+  set_target_properties(zlay_os PROPERTIES EXPORT_NAME os)
   target_link_libraries(zlay_os INTERFACE zlay)
 endif()
 
@@ -295,11 +374,32 @@ if (ZLAY_BUILD_EXAMPLES)
   if (X11_FOUND)
     add_executable(zlay_example_gui_x11
       example/simply_gui/gui_x11.c
-      example/simply_gui/gui_x11.h
+      include/simply_gui/gui_x11.h
     )
     target_compile_features(zlay_example_gui_x11 PRIVATE c_std_11)
     target_include_directories(zlay_example_gui_x11 PRIVATE ${ZLAY_PUBLIC_INCLUDE_DIRS} ${X11_INCLUDE_DIR})
     target_link_libraries(zlay_example_gui_x11 PRIVATE zlay ${X11_LIBRARIES})
+  endif()
+
+  if (WIN32)
+    add_executable(zlay_example_gui_win32
+      example/simply_gui/gui_win32.c
+      include/simply_gui/gui_win32.h
+    )
+    target_compile_features(zlay_example_gui_win32 PRIVATE c_std_11)
+    target_include_directories(zlay_example_gui_win32 PRIVATE ${ZLAY_PUBLIC_INCLUDE_DIRS})
+    target_link_libraries(zlay_example_gui_win32 PRIVATE zlay user32 gdi32)
+  endif()
+
+  if (APPLE)
+    enable_language(OBJCXX)
+    find_library(COCOA_FRAMEWORK Cocoa REQUIRED)
+    add_executable(zlay_example_gui_cocoa
+      example/simply_gui/gui_cocoa.mm
+      include/simply_gui/gui_cocoa.h
+    )
+    target_include_directories(zlay_example_gui_cocoa PRIVATE ${ZLAY_PUBLIC_INCLUDE_DIRS})
+    target_link_libraries(zlay_example_gui_cocoa PRIVATE zlay ${COCOA_FRAMEWORK})
   endif()
 
   if (TARGET zlay_driver_opengl)
@@ -323,5 +423,13 @@ if (ZLAY_BUILD_EXAMPLES)
     if (TARGET zlay_example_gui_x11)
       target_link_libraries(zlay_example_gui_x11 PRIVATE zlay_os)
     endif()
+    if (TARGET zlay_example_gui_win32)
+      target_link_libraries(zlay_example_gui_win32 PRIVATE zlay_os)
+    endif()
+    if (TARGET zlay_example_gui_cocoa)
+      target_link_libraries(zlay_example_gui_cocoa PRIVATE zlay_os)
+    endif()
   endif()
 endif()
+
+include(cmake/install.cmake)

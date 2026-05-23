@@ -1,4 +1,5 @@
 #include <os/winrt/zlay_impl_winrt.h>
+#include <zlay_os.h>
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -27,8 +28,20 @@ bool ZLay_ImplWinRT_Init(const ZLay_ImplWinRT_InitInfo* info) {
   return true;
 }
 
+bool ZLay_WinRT_Init(const ZLay_WinRTInitInfo* info) {
+  ZLay_ImplWinRT_InitInfo impl;
+  impl.core_window = info ? info->core_window : 0;
+  impl.width = info ? info->width : 0;
+  impl.height = info ? info->height : 0;
+  return ZLay_ImplWinRT_Init(&impl);
+}
+
 void ZLay_ImplWinRT_Shutdown(void) {
   zlay_winrt_state = (ZLay_ImplWinRT_State){0};
+}
+
+void ZLay_WinRT_Shutdown(void) {
+  ZLay_ImplWinRT_Shutdown();
 }
 
 void ZLay_ImplWinRT_NewFrame(ZLay_Context* ctx, int32_t width, int32_t height) {
@@ -37,9 +50,17 @@ void ZLay_ImplWinRT_NewFrame(ZLay_Context* ctx, int32_t width, int32_t height) {
   if (ctx) ZLay_SetLayoutDimensions(ctx, (ZLay_Dimensions){(float)width, (float)height});
 }
 
+void ZLay_WinRT_NewFrame(ZLay_Context* ctx, int32_t width, int32_t height) {
+  ZLay_ImplWinRT_NewFrame(ctx, width, height);
+}
+
 float ZLay_ImplWinRT_GetDpiScale(void* core_window) {
   (void)core_window;
   return 1.0f;
+}
+
+float ZLay_WinRT_GetDpiScale(void* core_window) {
+  return ZLay_ImplWinRT_GetDpiScale(core_window);
 }
 
 ZLay_OSStyleInfo ZLay_ImplWinRT_GetStyleInfo(void) {
@@ -53,6 +74,10 @@ ZLay_OSStyleInfo ZLay_ImplWinRT_GetStyleInfo(void) {
     34.0f,
     "Segoe UI Variable, Segoe UI"
   };
+}
+
+ZLay_OSStyleInfo ZLay_WinRT_GetStyleInfo(void) {
+  return ZLay_ImplWinRT_GetStyleInfo();
 }
 
 const char* ZLay_OS_BackendName(void) {

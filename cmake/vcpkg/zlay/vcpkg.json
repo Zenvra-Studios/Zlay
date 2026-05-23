@@ -1,0 +1,41 @@
+{
+  "name": "zlay",
+  "version": "0.1.0",
+  "description": "Native C layout and styling library for UI tools and engine editors.",
+  "license": "GPL-3.0-or-later",
+  "dependencies": [
+    {
+      "name": "vcpkg-cmake",
+      "host": true
+    },
+    {
+      "name": "vcpkg-cmake-config",
+      "host": true
+    }
+  ],
+  "default-features": [
+    "lifecycle",
+    "parser",
+    "renderer"
+  ],
+  "features": {
+    "drivers": {
+      "description": "Build the OpenGL and Vulkan driver adapter targets."
+    },
+    "lifecycle": {
+      "description": "Build lifecycle, autosave, journal, and recovery helpers."
+    },
+    "os": {
+      "description": "Build the platform OS helper target."
+    },
+    "parser": {
+      "description": "Build the ZLay DSL parser frontend target."
+    },
+    "renderer": {
+      "description": "Build the renderer abstraction target."
+    },
+    "shaders": {
+      "description": "Build built-in shader source embedding support."
+    }
+  }
+}

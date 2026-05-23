@@ -20,10 +20,6 @@ extern "C" {
 
 #include <zlay_math.h>
 
-// -----------------------------
-// C standard detection
-// -----------------------------
-
 #define ZLAY_C_STANDARD_VERSION 0L
 #define ZLAY_C_STANDARD_C99 0
 #define ZLAY_C_STANDARD_C11 0
