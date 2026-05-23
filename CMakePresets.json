@@ -34,6 +34,15 @@
       }
     },
     {
+      "name": "clangd",
+      "displayName": "Clangd IntelliSense",
+      "inherits": "debug",
+      "binaryDir": "${sourceDir}/build/clangd",
+      "cacheVariables": {
+        "ZLAY_CLANGD_COPY_COMPILE_COMMANDS": "ON"
+      }
+    },
+    {
       "name": "release",
       "displayName": "Release",
       "inherits": "base",
@@ -62,6 +71,10 @@
     {
       "name": "debug",
       "configurePreset": "debug"
+    },
+    {
+      "name": "clangd",
+      "configurePreset": "clangd"
     },
     {
       "name": "release",

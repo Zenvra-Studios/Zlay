@@ -48,6 +48,46 @@ ZLay_Style ZLay_StyleDefault(void) {
   return s;
 }
 
+ZLay_EdgeInsets ZLay_EdgeInsetsAll(float value) {
+  return (ZLay_EdgeInsets){value, value, value, value};
+}
+
+ZLay_EdgeInsets ZLay_EdgeInsetsSymmetric(float horizontal, float vertical) {
+  return (ZLay_EdgeInsets){horizontal, vertical, horizontal, vertical};
+}
+
+ZLay_EdgeInsets ZLay_EdgeInsetsOnly(float left, float top, float right, float bottom) {
+  return (ZLay_EdgeInsets){left, top, right, bottom};
+}
+
+ZLay_Style ZLay_StyleWithBackground(ZLay_Style style, ZLay_Color color) {
+  style.background = color;
+  return style;
+}
+
+ZLay_Style ZLay_StyleWithRadius(ZLay_Style style, float radius) {
+  style.radius = radius;
+  return style;
+}
+
+ZLay_Style ZLay_RowStyle(ZLay_Size width, ZLay_Size height, float gap) {
+  ZLay_Style style = ZLay_StyleDefault();
+  style.width = width;
+  style.height = height;
+  style.flex_direction = ZLAY_FLEX_ROW;
+  style.gap = gap;
+  return style;
+}
+
+ZLay_Style ZLay_ColumnStyle(ZLay_Size width, ZLay_Size height, float gap) {
+  ZLay_Style style = ZLay_StyleDefault();
+  style.width = width;
+  style.height = height;
+  style.flex_direction = ZLAY_FLEX_COLUMN;
+  style.gap = gap;
+  return style;
+}
+
 ZLay_NodeDeclarationBuilder ZLay_BoxDecl(ZLay_Id id, ZLay_Style style) {
   ZLay_NodeDeclarationBuilder b;
   b.decl.type = ZLAY_NODE_BOX;

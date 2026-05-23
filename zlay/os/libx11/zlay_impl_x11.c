@@ -1,5 +1,5 @@
 #include <os/libx11/zlay_impl_x11.h>
-#include  <zlay_os.h>
+#include <os/zlay_os.h>
 
 #include <time.h>
 

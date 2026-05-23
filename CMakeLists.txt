@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.24)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE BOOL "Export compile_commands.json for clangd and other language servers")
+
 project(ZLay VERSION 0.1.0 LANGUAGES C CXX)
 
 include(GNUInstallDirs)
@@ -12,6 +14,7 @@ option(ZLAY_BUILD_LIFECYCLE "Build ZLay lifecycle, autosave, journal, and recove
 option(ZLAY_BUILD_PARSER "Build ZLay DSL parser frontend" ON)
 option(ZLAY_BUILD_RENDERER "Build ZLay renderer abstraction" ON)
 option(ZLAY_BUILD_SHADERS "Build ZLay built-in shader sources" ON)
+option(ZLAY_CLANGD_COPY_COMPILE_COMMANDS "Copy compile_commands.json to the source root for clangd" ${PROJECT_IS_TOP_LEVEL})
 set(ZLAY_HEADER_TEMPLATE_STYLE "ifndef" CACHE STRING "Default generated header style: ifndef, pragma_once, both")
 set_property(CACHE ZLAY_HEADER_TEMPLATE_STYLE PROPERTY STRINGS ifndef pragma_once both)
 set(ZLAY_HEADER_TEMPLATE_INCLUDE "zlay.h" CACHE STRING "Default include used by generated ZLay headers; empty disables the include")
@@ -105,6 +108,16 @@ file(GLOB_RECURSE ZLAY_PARSER_HEADERS CONFIGURE_DEPENDS
   ${ZLAY_SOURCE_DIR}/parser/syntax/*.h
 )
 list(SORT ZLAY_PARSER_HEADERS)
+
+file(GLOB ZLAY_DRIVER_CORE_SOURCES CONFIGURE_DEPENDS
+  ${ZLAY_SOURCE_DIR}/driver/*.c
+)
+list(SORT ZLAY_DRIVER_CORE_SOURCES)
+
+file(GLOB ZLAY_DRIVER_CORE_HEADERS CONFIGURE_DEPENDS
+  ${ZLAY_SOURCE_DIR}/driver/*.h
+)
+list(SORT ZLAY_DRIVER_CORE_HEADERS)
 
 file(GLOB ZLAY_DRIVER_OPENGL_SOURCES CONFIGURE_DEPENDS
   ${ZLAY_SOURCE_DIR}/driver/opengl/*.c
@@ -208,6 +221,17 @@ add_custom_target(zlay_generate_header
   VERBATIM
 )
 
+if (ZLAY_CLANGD_COPY_COMPILE_COMMANDS)
+  add_custom_target(zlay_clangd_database ALL
+    COMMAND ${CMAKE_COMMAND}
+      -DZLAY_COMPILE_COMMANDS_IN=${CMAKE_BINARY_DIR}/compile_commands.json
+      -DZLAY_COMPILE_COMMANDS_OUT=${CMAKE_CURRENT_SOURCE_DIR}/compile_commands.json
+      -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/copy_compile_commands.cmake
+    COMMENT "Refreshing root compile_commands.json for clangd"
+    VERBATIM
+  )
+endif()
+
 target_sources(zlay
   PRIVATE
     ${ZLAY_CORE_SOURCES}
@@ -309,18 +333,24 @@ if (ZLAY_BUILD_SHADERS)
 endif()
 
 if (ZLAY_BUILD_DRIVERS)
+  target_sources(zlay PRIVATE ${ZLAY_DRIVER_CORE_SOURCES} ${ZLAY_DRIVER_CORE_HEADERS})
   target_sources(zlay PRIVATE ${ZLAY_DRIVER_OPENGL_SOURCES} ${ZLAY_DRIVER_OPENGL_HEADERS})
   target_sources(zlay PRIVATE ${ZLAY_DRIVER_VULKAN_SOURCES} ${ZLAY_DRIVER_VULKAN_HEADERS})
+
+  add_library(zlay_driver INTERFACE)
+  add_library(zlay::driver ALIAS zlay_driver)
+  set_target_properties(zlay_driver PROPERTIES EXPORT_NAME driver)
+  target_link_libraries(zlay_driver INTERFACE zlay)
 
   add_library(zlay_driver_opengl INTERFACE)
   add_library(zlay::driver_opengl ALIAS zlay_driver_opengl)
   set_target_properties(zlay_driver_opengl PROPERTIES EXPORT_NAME driver_opengl)
-  target_link_libraries(zlay_driver_opengl INTERFACE zlay)
+  target_link_libraries(zlay_driver_opengl INTERFACE zlay_driver)
 
   add_library(zlay_driver_vulkan INTERFACE)
   add_library(zlay::driver_vulkan ALIAS zlay_driver_vulkan)
   set_target_properties(zlay_driver_vulkan PROPERTIES EXPORT_NAME driver_vulkan)
-  target_link_libraries(zlay_driver_vulkan INTERFACE zlay)
+  target_link_libraries(zlay_driver_vulkan INTERFACE zlay_driver)
 endif()
 
 if (ZLAY_BUILD_OS)

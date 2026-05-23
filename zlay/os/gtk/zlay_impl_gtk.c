@@ -1,5 +1,5 @@
 #include <os/gtk/zlay_impl_gtk.h>
-#include <zlay_os.h> 
+#include <os/zlay_os.h>
 
 #include <time.h>
 

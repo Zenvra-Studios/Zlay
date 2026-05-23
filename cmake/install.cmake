@@ -11,6 +11,7 @@ foreach(_ZLAY_TARGET IN ITEMS
   zlay_renderer
   zlay_parser
   zlay_shaders
+  zlay_driver
   zlay_driver_opengl
   zlay_driver_vulkan
   zlay_os

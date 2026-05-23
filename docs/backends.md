@@ -34,10 +34,23 @@ zlay/renderer/
   zlay_renderer.h
   zlay_renderer.c
 zlay/driver/
-  opengl/zlay_opengl.h
-  opengl/zlay_opengl.c
-  vulkan/zlay_vulkan.h
-  vulkan/zlay_vulkan.c
+  opengl/zlay_opengl.h        # compatibility facade
+  opengl/zlay_gl_driver.h
+  opengl/zlay_gl_driver.c
+  opengl/zlay_gl_context.c
+  opengl/zlay_gl_pipeline.c
+  opengl/zlay_gl_buffer.c
+  opengl/zlay_gl_texture.c
+  vulkan/zlay_vulkan.h        # compatibility facade
+  vulkan/zlay_vk_driver.h
+  vulkan/zlay_vk_driver.c
+  vulkan/zlay_vk_instance.c
+  vulkan/zlay_vk_device.c
+  vulkan/zlay_vk_swapchain.c
+  vulkan/zlay_vk_pipeline.c
+  vulkan/zlay_vk_buffer.c
+  vulkan/zlay_vk_command.c
+  vulkan/zlay_vk_sync.c
 ```
 
 Semua folder di bawah `zlay/` tetap diekspor sebagai include public lewat CMake, jadi consumer dapat memakai `#include <zlay.h>`, `#include <renderer/zlay_renderer.h>`, `#include <driver/opengl/zlay_opengl.h>`, dan `#include <os/zlay_os.h>` tanpa peduli lokasi fisik internalnya.

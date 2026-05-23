@@ -1,5 +1,5 @@
 #include <os/winrt/zlay_impl_winrt.h>
-#include <zlay_os.h>
+#include <os/zlay_os.h>
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>

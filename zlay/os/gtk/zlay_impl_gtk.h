@@ -13,11 +13,18 @@ typedef struct ZLay_ImplGTK_InitInfo {
   int32_t height;
 } ZLay_ImplGTK_InitInfo;
 
+typedef ZLay_ImplGTK_InitInfo ZLay_GTKInitInfo;
+
 ZLAY_API bool ZLay_ImplGTK_Init(const ZLay_ImplGTK_InitInfo* info);
 ZLAY_API void ZLay_ImplGTK_Shutdown(void);
 ZLAY_API void ZLay_ImplGTK_NewFrame(ZLay_Context* ctx, int32_t width, int32_t height);
 ZLAY_API float ZLay_ImplGTK_GetDpiScale(void* widget);
 ZLAY_API ZLay_OSStyleInfo ZLay_ImplGTK_GetStyleInfo(void);
+ZLAY_API bool ZLay_GTK_Init(const ZLay_GTKInitInfo* info);
+ZLAY_API void ZLay_GTK_Shutdown(void);
+ZLAY_API void ZLay_GTK_NewFrame(ZLay_Context* ctx, int32_t width, int32_t height);
+ZLAY_API float ZLay_GTK_GetDpiScale(void* widget);
+ZLAY_API ZLay_OSStyleInfo ZLay_GTK_GetStyleInfo(void);
 
 #ifdef __cplusplus
 }

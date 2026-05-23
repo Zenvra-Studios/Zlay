@@ -10,7 +10,7 @@ set(ZLay_LIBRARIES zlay::zlay)
 set(ZLay_FOUND TRUE)
 
 set(ZLay_AVAILABLE_COMPONENTS "")
-foreach(_ZLay_component IN ITEMS core lifecycle parser renderer shaders driver_opengl driver_vulkan os)
+foreach(_ZLay_component IN ITEMS core lifecycle parser renderer shaders driver driver_opengl driver_vulkan os)
   if(TARGET "zlay::${_ZLay_component}")
     list(APPEND ZLay_AVAILABLE_COMPONENTS "${_ZLay_component}")
     set(ZLay_${_ZLay_component}_FOUND TRUE)

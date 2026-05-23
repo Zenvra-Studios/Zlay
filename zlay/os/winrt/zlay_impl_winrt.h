@@ -13,11 +13,18 @@ typedef struct ZLay_ImplWinRT_InitInfo {
   int32_t height;
 } ZLay_ImplWinRT_InitInfo;
 
+typedef ZLay_ImplWinRT_InitInfo ZLay_WinRTInitInfo;
+
 ZLAY_API bool ZLay_ImplWinRT_Init(const ZLay_ImplWinRT_InitInfo* info);
 ZLAY_API void ZLay_ImplWinRT_Shutdown(void);
 ZLAY_API void ZLay_ImplWinRT_NewFrame(ZLay_Context* ctx, int32_t width, int32_t height);
 ZLAY_API float ZLay_ImplWinRT_GetDpiScale(void* core_window);
 ZLAY_API ZLay_OSStyleInfo ZLay_ImplWinRT_GetStyleInfo(void);
+ZLAY_API bool ZLay_WinRT_Init(const ZLay_WinRTInitInfo* info);
+ZLAY_API void ZLay_WinRT_Shutdown(void);
+ZLAY_API void ZLay_WinRT_NewFrame(ZLay_Context* ctx, int32_t width, int32_t height);
+ZLAY_API float ZLay_WinRT_GetDpiScale(void* core_window);
+ZLAY_API ZLay_OSStyleInfo ZLay_WinRT_GetStyleInfo(void);
 
 #ifdef __cplusplus
 }

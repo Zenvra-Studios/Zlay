@@ -3,8 +3,8 @@
 
 #include <stdlib.h>
 
-#include "zlay.h"
-#include "os/zlay_os.h"
+#include <zlay.h>
+#include <os/zlay_os.h>
 
 typedef struct ZLay_ExampleMemory {
   void* memory;

@@ -1,5 +1,5 @@
 #include <os/win32/zlay_impl_win32.h>
-#include <zlay_os.h> 
+#include <os/zlay_os.h>
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>

@@ -1,21 +1,41 @@
 CompileFlags:
-  CompilationDatabase: build/debug
+  CompilationDatabase: Ancestors
   Add:
     - -I.
     - -Iinclude
     - -Izlay
+    - -Ibuild/clangd/generated
     - -Ibuild/debug/generated
     - -DZLAY_BUILDING
+    - -DZLAY_SHARED
+    - -Ibuild/release/generated
+    - -Ibuild/codex-driver/generated
+    - -Icmake/clangd/include
 ---
 If:
-  PathMatch: .*\.c
+  PathMatch: .*\.c$
 CompileFlags:
   Add:
+    - -xc
     - -std=gnu11
 ---
 If:
-  PathMatch: .*\.h
+  PathMatch: .*\.h$
 CompileFlags:
   Add:
     - -xc-header
     - -std=gnu11
+---
+If:
+  PathMatch: .*\.cpp$
+CompileFlags:
+  Add:
+    - -xc++
+    - -std=c++20
+---
+If:
+  PathMatch: .*\.mm$
+CompileFlags:
+  Add:
+    - -xobjective-c++
+    - -std=c++20
