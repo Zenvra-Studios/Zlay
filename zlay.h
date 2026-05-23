@@ -19,6 +19,27 @@ extern "C" {
 #include <stdint.h>
 
 // -----------------------------
+// C standard detection
+// -----------------------------
+
+#define ZLAY_C_STANDARD_VERSION 0L
+#define ZLAY_C_STANDARD_C99 0
+#define ZLAY_C_STANDARD_C11 0
+
+#if defined(__STDC_VERSION__)
+#   undef ZLAY_C_STANDARD_VERSION
+#   define ZLAY_C_STANDARD_VERSION __STDC_VERSION__
+#   if __STDC_VERSION__ >= 199901L
+#     undef ZLAY_C_STANDARD_C99
+#     define ZLAY_C_STANDARD_C99 1
+#   endif
+#   if __STDC_VERSION__ >= 201112L
+#     undef ZLAY_C_STANDARD_C11
+#     define ZLAY_C_STANDARD_C11 1
+#   endif
+#endif
+
+// -----------------------------
 // Platform detection
 // -----------------------------
 

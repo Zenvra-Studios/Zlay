@@ -7,4 +7,16 @@ CompileFlags:
     - -Ibuild/debug/generated
     - -DZLAY_BUILDING
     - -DZLAY_SHARED
-    - -std=gnu99
+---
+If:
+  PathMatch: .*\.c
+CompileFlags:
+  Add:
+    - -std=gnu11
+---
+If:
+  PathMatch: .*\.h
+CompileFlags:
+  Add:
+    - -xc-header
+    - -std=gnu11
