@@ -8,11 +8,27 @@ extern "C" {
 #include <stdint.h>
 
 #include <zlay.h>
+#include <os/zlay_dpi.h>
+#include <os/zlay_native.h>
+#include <os/zlay_platform.h>
+#include <os/event/zlay_event.h>
+#include <os/event/zlay_input.h>
+#include <os/event/zlay_keycode.h>
+#include <os/event/zlay_mouse.h>
+#include <os/system/zlay_clipboard.h>
+#include <os/system/zlay_file.h>
+#include <os/system/zlay_mutex.h>
+#include <os/system/zlay_path.h>
+#include <os/system/zlay_thread.h>
+#include <os/system/zlay_timer.h>
+#include <os/window/zlay_cursor.h>
+#include <os/window/zlay_monitor.h>
+#include <os/window/zlay_window.h>
 
 typedef enum ZLay_OSBackendType {
   ZLAY_OS_BACKEND_NULL = 0,
   ZLAY_OS_BACKEND_WIN32,
-  ZLAY_OS_BACKEND_WINRT,
+  ZLAY_OS_BACKEND_WINRT, /* reserved: WinRT is exposed as Windows modern support, not a window backend */
   ZLAY_OS_BACKEND_COCOA,
   ZLAY_OS_BACKEND_GTK,
   ZLAY_OS_BACKEND_X11,

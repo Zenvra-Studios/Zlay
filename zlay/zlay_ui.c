@@ -220,7 +220,7 @@ ZLay_Style ZLay_SurfaceStyle(ZLay_SurfaceVariant variant, const ZLay_Theme* them
       style.background = resolved->surface_raised;
       style.border_width = 1.0f;
       style.border_color = ZLay_ColorWithAlpha(resolved->border, 128);
-      style.shadow = ZLay_ShadowMacOS();
+      style.shadow = ZLay_ShadowFloating();
       break;
     case ZLAY_SURFACE_MUTED: style.background = resolved->surface_muted; break;
     case ZLAY_SURFACE_PANEL:

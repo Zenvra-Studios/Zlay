@@ -41,12 +41,12 @@ ZLay_Rounded ZLay_RoundedContinuous(float radius) {
   return rounded;
 }
 
-ZLay_Rounded ZLay_RoundedMacOS(float radius) {
+ZLay_Rounded ZLay_RoundedSquircle(float radius) {
   ZLay_Rounded rounded;
   rounded.radius = ZLay_MaxFloat(radius, 0.0f);
   rounded.smoothness = 0.86f;
   rounded.exponent = 5.0f;
-  rounded.curve = ZLAY_ROUNDED_CURVE_MACOS;
+  rounded.curve = ZLAY_ROUNDED_CURVE_SQUIRCLE;
   return rounded;
 }
 
@@ -58,9 +58,9 @@ ZLay_Rounded ZLay_RoundedPresetValue(ZLay_RoundedPreset preset) {
     case ZLAY_ROUNDED_XL: return ZLay_RoundedCircular(24.0f);
     case ZLAY_ROUNDED_2XL: return ZLay_RoundedCircular(32.0f);
     case ZLAY_ROUNDED_PILL: return ZLay_RoundedCircular(999.0f);
-    case ZLAY_ROUNDED_MACOS_SM: return ZLay_RoundedMacOS(8.0f);
-    case ZLAY_ROUNDED_MACOS_MD: return ZLay_RoundedMacOS(14.0f);
-    case ZLAY_ROUNDED_MACOS_LG: return ZLay_RoundedMacOS(20.0f);
+    case ZLAY_ROUNDED_SQUIRCLE_SM: return ZLay_RoundedSquircle(8.0f);
+    case ZLAY_ROUNDED_SQUIRCLE_MD: return ZLay_RoundedSquircle(14.0f);
+    case ZLAY_ROUNDED_SQUIRCLE_LG: return ZLay_RoundedSquircle(20.0f);
     case ZLAY_ROUNDED_NONE:
     default: return ZLay_RoundedCircular(0.0f);
   }
@@ -98,7 +98,7 @@ ZLay_Rounded ZLay_RoundedResolve(ZLay_Rounded rounded) {
   }
 
   switch (rounded.curve) {
-    case ZLAY_ROUNDED_CURVE_MACOS:
+    case ZLAY_ROUNDED_CURVE_SQUIRCLE:
       if (rounded.exponent < 2.0f) rounded.exponent = 5.0f;
       if (rounded.smoothness <= 0.0f) rounded.smoothness = 0.86f;
       break;

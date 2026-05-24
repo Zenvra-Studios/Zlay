@@ -146,7 +146,7 @@ ZLay_Shadow ZLay_ShadowPx(float offset_x, float offset_y, float blur, float spre
   return ZLay_ShadowMake((ZLay_Color){0, 0, 0, alpha}, offset_x, offset_y, blur, spread);
 }
 
-ZLay_Shadow ZLay_ShadowMacOS(void) {
+ZLay_Shadow ZLay_ShadowFloating(void) {
   return ZLay_ShadowMake((ZLay_Color){0, 0, 0, 46}, 0.0f, 12.0f, 28.0f, -2.0f);
 }
 

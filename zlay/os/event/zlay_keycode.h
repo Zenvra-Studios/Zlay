@@ -1,0 +1,91 @@
+#ifndef ZLAY_OS_EVENT_ZLAY_KEYCODE_H
+#define ZLAY_OS_EVENT_ZLAY_KEYCODE_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+typedef enum ZLay_Key {
+  ZLAY_KEY_UNKNOWN = 0,
+
+  ZLAY_KEY_A,
+  ZLAY_KEY_B,
+  ZLAY_KEY_C,
+  ZLAY_KEY_D,
+  ZLAY_KEY_E,
+  ZLAY_KEY_F,
+  ZLAY_KEY_G,
+  ZLAY_KEY_H,
+  ZLAY_KEY_I,
+  ZLAY_KEY_J,
+  ZLAY_KEY_K,
+  ZLAY_KEY_L,
+  ZLAY_KEY_M,
+  ZLAY_KEY_N,
+  ZLAY_KEY_O,
+  ZLAY_KEY_P,
+  ZLAY_KEY_Q,
+  ZLAY_KEY_R,
+  ZLAY_KEY_S,
+  ZLAY_KEY_T,
+  ZLAY_KEY_U,
+  ZLAY_KEY_V,
+  ZLAY_KEY_W,
+  ZLAY_KEY_X,
+  ZLAY_KEY_Y,
+  ZLAY_KEY_Z,
+
+  ZLAY_KEY_0,
+  ZLAY_KEY_1,
+  ZLAY_KEY_2,
+  ZLAY_KEY_3,
+  ZLAY_KEY_4,
+  ZLAY_KEY_5,
+  ZLAY_KEY_6,
+  ZLAY_KEY_7,
+  ZLAY_KEY_8,
+  ZLAY_KEY_9,
+
+  ZLAY_KEY_ESCAPE,
+  ZLAY_KEY_ENTER,
+  ZLAY_KEY_TAB,
+  ZLAY_KEY_BACKSPACE,
+  ZLAY_KEY_SPACE,
+
+  ZLAY_KEY_LEFT,
+  ZLAY_KEY_RIGHT,
+  ZLAY_KEY_UP,
+  ZLAY_KEY_DOWN,
+
+  ZLAY_KEY_SHIFT,
+  ZLAY_KEY_CONTROL,
+  ZLAY_KEY_ALT,
+  ZLAY_KEY_SUPER,
+
+  ZLAY_KEY_F1,
+  ZLAY_KEY_F2,
+  ZLAY_KEY_F3,
+  ZLAY_KEY_F4,
+  ZLAY_KEY_F5,
+  ZLAY_KEY_F6,
+  ZLAY_KEY_F7,
+  ZLAY_KEY_F8,
+  ZLAY_KEY_F9,
+  ZLAY_KEY_F10,
+  ZLAY_KEY_F11,
+  ZLAY_KEY_F12
+} ZLay_Key;
+
+typedef enum ZLay_KeyModifier {
+  ZLAY_KEY_MOD_NONE = 0,
+  ZLAY_KEY_MOD_SHIFT = 1u << 0u,
+  ZLAY_KEY_MOD_CONTROL = 1u << 1u,
+  ZLAY_KEY_MOD_ALT = 1u << 2u,
+  ZLAY_KEY_MOD_SUPER = 1u << 3u
+} ZLay_KeyModifier;
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif

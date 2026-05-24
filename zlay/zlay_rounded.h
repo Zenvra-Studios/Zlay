@@ -18,7 +18,7 @@ extern "C" {
 typedef enum ZLay_RoundedCurve {
   ZLAY_ROUNDED_CURVE_CIRCULAR = 0,
   ZLAY_ROUNDED_CURVE_CONTINUOUS = 1,
-  ZLAY_ROUNDED_CURVE_MACOS = 2,
+  ZLAY_ROUNDED_CURVE_SQUIRCLE = 2,
   ZLAY_ROUNDED_CURVE_CUSTOM = 3
 } ZLay_RoundedCurve;
 
@@ -37,9 +37,9 @@ typedef enum ZLay_RoundedPreset {
   ZLAY_ROUNDED_XL = 4,
   ZLAY_ROUNDED_2XL = 5,
   ZLAY_ROUNDED_PILL = 6,
-  ZLAY_ROUNDED_MACOS_SM = 7,
-  ZLAY_ROUNDED_MACOS_MD = 8,
-  ZLAY_ROUNDED_MACOS_LG = 9
+  ZLAY_ROUNDED_SQUIRCLE_SM = 7,
+  ZLAY_ROUNDED_SQUIRCLE_MD = 8,
+  ZLAY_ROUNDED_SQUIRCLE_LG = 9
 } ZLay_RoundedPreset;
 
 ZLAY_ROUNDED_API float ZLay_RoundedClampRadius(float radius, float width, float height);
@@ -47,7 +47,7 @@ ZLAY_ROUNDED_API ZLay_Rounded ZLay_RoundedMake(float radius, ZLay_RoundedCurve c
 ZLAY_ROUNDED_API ZLay_Rounded ZLay_RoundedCustom(float radius, float smoothness, float exponent);
 ZLAY_ROUNDED_API ZLay_Rounded ZLay_RoundedCircular(float radius);
 ZLAY_ROUNDED_API ZLay_Rounded ZLay_RoundedContinuous(float radius);
-ZLAY_ROUNDED_API ZLay_Rounded ZLay_RoundedMacOS(float radius);
+ZLAY_ROUNDED_API ZLay_Rounded ZLay_RoundedSquircle(float radius);
 ZLAY_ROUNDED_API ZLay_Rounded ZLay_RoundedPresetValue(ZLay_RoundedPreset preset);
 ZLAY_ROUNDED_API ZLay_Rounded ZLay_RoundedWithRadius(ZLay_Rounded rounded, float radius);
 ZLAY_ROUNDED_API ZLay_Rounded ZLay_RoundedWithSmoothness(ZLay_Rounded rounded, float smoothness);

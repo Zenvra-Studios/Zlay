@@ -185,7 +185,7 @@ extern "C" {
 #  endif
 #endif
 
-#include <zlay_rounded.h>
+#include <zlay/zlay_rounded.h>
 
 #define ZLAY_STRING_LITERAL(str_lit) \
   ((ZLay_String){ (str_lit), (uint32_t)(sizeof(str_lit) - 1u), true })
@@ -739,7 +739,7 @@ ZLAY_API ZLay_Shadow ZLay_ShadowNone(void);
 ZLAY_API ZLay_Shadow ZLay_ShadowMake(ZLay_Color color, float offset_x, float offset_y, float blur, float spread);
 ZLAY_API ZLay_Shadow ZLay_ShadowPresetValue(ZLay_ShadowPreset preset);
 ZLAY_API ZLay_Shadow ZLay_ShadowPx(float offset_x, float offset_y, float blur, float spread, uint8_t alpha);
-ZLAY_API ZLay_Shadow ZLay_ShadowMacOS(void);
+ZLAY_API ZLay_Shadow ZLay_ShadowFloating(void);
 ZLAY_API ZLay_Style ZLay_StyleWithBorder(ZLay_Style style, float width, ZLay_Color color);
 ZLAY_API ZLay_Style ZLay_StyleWithShadow(ZLay_Style style, ZLay_Shadow shadow);
 ZLAY_API ZLay_Style ZLay_StyleWithShadowPreset(ZLay_Style style, ZLay_ShadowPreset preset);

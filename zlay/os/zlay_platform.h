@@ -1,0 +1,23 @@
+#ifndef ZLAY_OS_ZLAY_PLATFORM_H
+#define ZLAY_OS_ZLAY_PLATFORM_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+typedef enum ZLay_Platform {
+  ZLAY_OS_PLATFORM_UNKNOWN = 0,
+  ZLAY_OS_PLATFORM_WIN32,
+  ZLAY_OS_PLATFORM_X11,
+  ZLAY_OS_PLATFORM_WAYLAND,
+  ZLAY_OS_PLATFORM_COCOA,
+  ZLAY_OS_PLATFORM_IOS,
+  ZLAY_OS_PLATFORM_ANDROID,
+  ZLAY_OS_PLATFORM_EMSCRIPTEN
+} ZLay_Platform;
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif

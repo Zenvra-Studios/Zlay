@@ -31,6 +31,13 @@ inline ZLay_Size grow(float weight = 1.0f) {
   return ZLay_Grow(weight);
 }
 
+inline ZLay_Size autoSize() {
+  ZLay_Size size{};
+  size.type = ZLAY_SIZE_AUTO;
+  size.value = 0.0f;
+  return size;
+}
+
 inline ZLay_Color rgb(int r, int g, int b) {
   return ZLay_ColorRGB(r, g, b);
 }
@@ -79,6 +86,46 @@ inline bool findBounds(const Context& ctx, std::string_view widgetId, ZLay_Rect*
   return findBounds(ctx, id(widgetId), out);
 }
 
+inline ZLay_EdgeInsets insets(float value) {
+  return ZLay_Insets(value);
+}
+
+inline ZLay_EdgeInsets insets(float horizontal, float vertical) {
+  return ZLay_InsetsXY(horizontal, vertical);
+}
+
+inline ZLay_EdgeInsets insets(float left, float top, float right, float bottom) {
+  return ZLay_InsetsLTRB(left, top, right, bottom);
+}
+
+inline ZLay_EdgeInsets insetsAll(float value) {
+  return ZLay_EdgeInsetsAll(value);
+}
+
+inline ZLay_EdgeInsets insetsSymmetric(float horizontal, float vertical) {
+  return ZLay_EdgeInsetsSymmetric(horizontal, vertical);
+}
+
+inline ZLay_EdgeInsets insetsOnly(float left = 0.0f, float top = 0.0f, float right = 0.0f, float bottom = 0.0f) {
+  return ZLay_EdgeInsetsOnly(left, top, right, bottom);
+}
+
+inline const char* defaultFontFamily() {
+  return ZLay_DefaultFontFamily();
+}
+
+inline ZLay_String defaultFontFamilyString() {
+  return ZLay_DefaultFontFamilyString();
+}
+
+inline uint32_t componentState(const ZLay_PointerState& pointer, ZLay_Rect bounds, bool tracked) {
+  return ZLay_ComponentStateFromPointer(&pointer, bounds, tracked);
+}
+
+inline uint32_t componentState(const ZLay_PointerState* pointer, ZLay_Rect bounds, bool tracked) {
+  return ZLay_ComponentStateFromPointer(pointer, bounds, tracked);
+}
+
 class Style {
 public:
   Style() : style_(ZLay_StyleDefault()) {}
@@ -100,6 +147,11 @@ public:
     return *this;
   }
 
+  Style& padding(ZLay_EdgeInsets value) {
+    style_ = ZLay_StyleWithPadding(style_, value);
+    return *this;
+  }
+
   Style& padding(float value) {
     style_ = ZLay_StyleWithPadding(style_, ZLay_Insets(value));
     return *this;
@@ -115,8 +167,23 @@ public:
     return *this;
   }
 
+  Style& margin(ZLay_EdgeInsets value) {
+    style_ = ZLay_StyleWithMargin(style_, value);
+    return *this;
+  }
+
   Style& margin(float value) {
     style_ = ZLay_StyleWithMargin(style_, ZLay_Insets(value));
+    return *this;
+  }
+
+  Style& margin(float horizontal, float vertical) {
+    style_ = ZLay_StyleWithMargin(style_, ZLay_InsetsXY(horizontal, vertical));
+    return *this;
+  }
+
+  Style& margin(float left, float top, float right, float bottom) {
+    style_ = ZLay_StyleWithMargin(style_, ZLay_InsetsLTRB(left, top, right, bottom));
     return *this;
   }
 
@@ -140,8 +207,8 @@ public:
     return *this;
   }
 
-  Style& roundedMacOS(float radiusValue) {
-    style_ = ZLay_StyleWithRounded(style_, ZLay_RoundedMacOS(radiusValue));
+  Style& roundedSquircle(float radiusValue) {
+    style_ = ZLay_StyleWithRounded(style_, ZLay_RoundedSquircle(radiusValue));
     return *this;
   }
 
@@ -157,6 +224,11 @@ public:
 
   Style& background(ZLay_Color color) {
     style_.background = color;
+    return *this;
+  }
+
+  Style& colors(ZLay_Color background, ZLay_Color text) {
+    style_ = ZLay_StyleWithColors(style_, background, text);
     return *this;
   }
 
@@ -180,8 +252,8 @@ public:
     return *this;
   }
 
-  Style& macOSShadow() {
-    style_ = ZLay_StyleWithShadow(style_, ZLay_ShadowMacOS());
+  Style& floatingShadow() {
+    style_ = ZLay_StyleWithShadow(style_, ZLay_ShadowFloating());
     return *this;
   }
 
@@ -292,6 +364,11 @@ public:
     return *this;
   }
 
+  TextStyle& state(uint32_t value) {
+    props_.state = value;
+    return *this;
+  }
+
   TextStyle& color(ZLay_Color value) {
     props_.color = value;
     props_.use_custom_color = true;
@@ -371,6 +448,12 @@ public:
     return *this;
   }
 
+  ButtonStyle& labelStyle(const Style& value) {
+    props_.label_style = value.raw();
+    props_.use_custom_label_style = true;
+    return *this;
+  }
+
   const ZLay_ButtonProps& raw() const {
     return props_;
   }
@@ -415,6 +498,12 @@ public:
   InputStyle& style(const Style& value) {
     props_.style = value.raw();
     props_.use_custom_style = true;
+    return *this;
+  }
+
+  InputStyle& textStyle(const Style& value) {
+    props_.text_style = value.raw();
+    props_.use_custom_text_style = true;
     return *this;
   }
 

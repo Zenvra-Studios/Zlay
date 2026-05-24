@@ -1,7 +1,8 @@
-#include <os/libx11/zlay_impl_x11.h>
-#include <os/zlay_os.h>
+#include <os/x11/zlay_x11_platform.h>
 
 #include <time.h>
+
+#include <X11/Xlib.h>
 
 typedef struct ZLay_ImplX11_State {
   void* display;
@@ -54,7 +55,23 @@ void ZLay_X11_NewFrame(ZLay_Context* ctx, int32_t width, int32_t height) {
 }
 
 float ZLay_ImplX11_GetDpiScale(void* display) {
-  (void)display;
+  Display* xdisplay = (Display*)display;
+  int screen;
+  int width_px;
+  int width_mm;
+
+  if (xdisplay == NULL) {
+    return 1.0f;
+  }
+
+  screen = DefaultScreen(xdisplay);
+  width_px = DisplayWidth(xdisplay, screen);
+  width_mm = DisplayWidthMM(xdisplay, screen);
+  if (width_px > 0 && width_mm > 0) {
+    const float dpi = (float)width_px * 25.4f / (float)width_mm;
+    return ZLay_DpiScaleFromDpi(dpi);
+  }
+
   return 1.0f;
 }
 
@@ -88,7 +105,12 @@ ZLay_OSBackendType ZLay_OS_BackendType(void) {
 }
 
 uint32_t ZLay_OS_Capabilities(void) {
-  return ZLAY_OS_CAP_MONOTONIC_TIME | ZLAY_OS_CAP_DPI_SCALE | ZLAY_OS_CAP_NATIVE_THEME | ZLAY_OS_CAP_MOUSE_CURSOR | ZLAY_OS_CAP_TEXT_INPUT;
+  return ZLAY_OS_CAP_MONOTONIC_TIME |
+         ZLAY_OS_CAP_DPI_SCALE |
+         ZLAY_OS_CAP_NATIVE_THEME |
+         ZLAY_OS_CAP_CLIPBOARD |
+         ZLAY_OS_CAP_MOUSE_CURSOR |
+         ZLAY_OS_CAP_TEXT_INPUT;
 }
 
 uint64_t ZLay_OS_NowNs(void) {

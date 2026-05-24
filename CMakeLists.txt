@@ -20,8 +20,9 @@ set_property(CACHE ZLAY_HEADER_TEMPLATE_STYLE PROPERTY STRINGS ifndef pragma_onc
 set(ZLAY_HEADER_TEMPLATE_INCLUDE "zlay.h" CACHE STRING "Default include used by generated ZLay headers; empty disables the include")
 option(ZLAY_HEADER_TEMPLATE_EXTERN_C "Wrap generated ZLay headers with extern C guards" ON)
 set(ZLAY_NEW_HEADER_PATH "" CACHE FILEPATH "Header path used by the zlay_generate_header target")
-set(ZLAY_OS_BACKEND "auto" CACHE STRING "Platform backend: auto, x11, gtk, win32, winrt, cocoa")
-set_property(CACHE ZLAY_OS_BACKEND PROPERTY STRINGS auto x11 gtk win32 winrt cocoa)
+set(ZLAY_OS_BACKEND "auto" CACHE STRING "Platform backend: auto, x11, gtk, win32, cocoa")
+set_property(CACHE ZLAY_OS_BACKEND PROPERTY STRINGS auto x11 gtk win32 cocoa)
+option(ZLAY_ENABLE_WINRT_SUPPORT "Build Windows 10/11 modern system support helpers on top of Win32" ON)
 
 set(ZLAY_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/zlay)
 set(ZLAY_SHADER_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/shader)
@@ -149,22 +150,49 @@ file(GLOB ZLAY_SHADER_LIBRARY_HEADERS CONFIGURE_DEPENDS
 )
 list(SORT ZLAY_SHADER_LIBRARY_HEADERS)
 
-file(GLOB ZLAY_OS_HEADERS CONFIGURE_DEPENDS
+file(GLOB_RECURSE ZLAY_OS_HEADERS CONFIGURE_DEPENDS
   ${ZLAY_SOURCE_DIR}/os/*.h
 )
+file(GLOB ZLAY_OS_ROOT_SOURCES CONFIGURE_DEPENDS
+  ${ZLAY_SOURCE_DIR}/os/*.c
+)
+file(GLOB_RECURSE ZLAY_OS_CORE_SOURCES CONFIGURE_DEPENDS
+  ${ZLAY_SOURCE_DIR}/os/event/*.c
+  ${ZLAY_SOURCE_DIR}/os/system/*.c
+  ${ZLAY_SOURCE_DIR}/os/window/*.c
+)
+list(APPEND ZLAY_OS_CORE_SOURCES ${ZLAY_OS_ROOT_SOURCES})
 list(SORT ZLAY_OS_HEADERS)
+list(SORT ZLAY_OS_CORE_SOURCES)
 
 file(GLOB ZLAY_OS_WIN32_SOURCES CONFIGURE_DEPENDS ${ZLAY_SOURCE_DIR}/os/win32/*.c)
-file(GLOB ZLAY_OS_WINRT_SOURCES CONFIGURE_DEPENDS ${ZLAY_SOURCE_DIR}/os/winrt/*.c)
-file(GLOB ZLAY_OS_COCOA_SOURCES CONFIGURE_DEPENDS ${ZLAY_SOURCE_DIR}/os/cocoa/*.c)
+file(GLOB_RECURSE ZLAY_OS_WINRT_SOURCES CONFIGURE_DEPENDS
+  ${ZLAY_SOURCE_DIR}/os/winrt/*.c
+  ${ZLAY_SOURCE_DIR}/os/winrt/*.cpp
+)
+file(GLOB_RECURSE ZLAY_OS_COCOA_SOURCES CONFIGURE_DEPENDS
+  ${ZLAY_SOURCE_DIR}/os/cocoa/*.c
+  ${ZLAY_SOURCE_DIR}/os/cocoa/*.m
+  ${ZLAY_SOURCE_DIR}/os/cocoa/*.mm
+)
 file(GLOB ZLAY_OS_GTK_SOURCES CONFIGURE_DEPENDS ${ZLAY_SOURCE_DIR}/os/gtk/*.c)
-file(GLOB ZLAY_OS_X11_SOURCES CONFIGURE_DEPENDS ${ZLAY_SOURCE_DIR}/os/libx11/*.c)
+file(GLOB ZLAY_OS_X11_SOURCES CONFIGURE_DEPENDS
+  ${ZLAY_SOURCE_DIR}/os/x11/*.c
+)
 
 file(GLOB ZLAY_OS_WIN32_HEADERS CONFIGURE_DEPENDS ${ZLAY_SOURCE_DIR}/os/win32/*.h)
-file(GLOB ZLAY_OS_WINRT_HEADERS CONFIGURE_DEPENDS ${ZLAY_SOURCE_DIR}/os/winrt/*.h)
-file(GLOB ZLAY_OS_COCOA_HEADERS CONFIGURE_DEPENDS ${ZLAY_SOURCE_DIR}/os/cocoa/*.h)
+file(GLOB_RECURSE ZLAY_OS_WINRT_HEADERS CONFIGURE_DEPENDS
+  ${ZLAY_SOURCE_DIR}/os/winrt/*.h
+  ${ZLAY_SOURCE_DIR}/os/winrt/*.hpp
+)
+file(GLOB_RECURSE ZLAY_OS_COCOA_HEADERS CONFIGURE_DEPENDS
+  ${ZLAY_SOURCE_DIR}/os/cocoa/*.h
+  ${ZLAY_SOURCE_DIR}/os/cocoa/*.hpp
+)
 file(GLOB ZLAY_OS_GTK_HEADERS CONFIGURE_DEPENDS ${ZLAY_SOURCE_DIR}/os/gtk/*.h)
-file(GLOB ZLAY_OS_X11_HEADERS CONFIGURE_DEPENDS ${ZLAY_SOURCE_DIR}/os/libx11/*.h)
+file(GLOB ZLAY_OS_X11_HEADERS CONFIGURE_DEPENDS
+  ${ZLAY_SOURCE_DIR}/os/x11/*.h
+)
 
 list(SORT ZLAY_OS_WIN32_SOURCES)
 list(SORT ZLAY_OS_WINRT_SOURCES)
@@ -358,6 +386,9 @@ if (ZLAY_BUILD_DRIVERS)
 endif()
 
 if (ZLAY_BUILD_OS)
+  find_package(Threads REQUIRED)
+  target_link_libraries(zlay PRIVATE Threads::Threads)
+
   set(ZLAY_EFFECTIVE_OS_BACKEND "${ZLAY_OS_BACKEND}")
   if (ZLAY_EFFECTIVE_OS_BACKEND STREQUAL "auto")
     if (WIN32)
@@ -370,19 +401,43 @@ if (ZLAY_BUILD_OS)
   endif()
 
   if (ZLAY_EFFECTIVE_OS_BACKEND STREQUAL "win32")
-    target_sources(zlay PRIVATE ${ZLAY_OS_HEADERS} ${ZLAY_OS_WIN32_SOURCES} ${ZLAY_OS_WIN32_HEADERS})
-  elseif(ZLAY_EFFECTIVE_OS_BACKEND STREQUAL "winrt")
-    target_sources(zlay PRIVATE ${ZLAY_OS_HEADERS} ${ZLAY_OS_WINRT_SOURCES} ${ZLAY_OS_WINRT_HEADERS})
+    target_compile_definitions(zlay PRIVATE ZLAY_OS_BACKEND_SELECTED_WIN32=1)
+    target_sources(zlay PRIVATE ${ZLAY_OS_HEADERS} ${ZLAY_OS_CORE_SOURCES} ${ZLAY_OS_WIN32_SOURCES} ${ZLAY_OS_WIN32_HEADERS})
+    if (WIN32 AND ZLAY_ENABLE_WINRT_SUPPORT)
+      target_compile_definitions(zlay PRIVATE ZLAY_ENABLE_WINRT_SUPPORT=1)
+      target_compile_definitions(zlay PUBLIC ZLAY_ENABLE_WINRT=1 ZLAY_ENABLE_WINRT_MODERN_UI=1)
+      target_sources(zlay PRIVATE ${ZLAY_OS_WINRT_SOURCES} ${ZLAY_OS_WINRT_HEADERS})
+      target_compile_features(zlay PRIVATE cxx_std_17)
+      target_link_libraries(zlay PRIVATE ole32)
+    endif()
   elseif(ZLAY_EFFECTIVE_OS_BACKEND STREQUAL "cocoa")
-    target_sources(zlay PRIVATE ${ZLAY_OS_HEADERS} ${ZLAY_OS_COCOA_SOURCES} ${ZLAY_OS_COCOA_HEADERS})
+    if(NOT APPLE)
+      message(FATAL_ERROR "ZLAY_OS_BACKEND=cocoa requires an Apple target")
+    endif()
+    enable_language(OBJCXX)
+    target_compile_definitions(zlay PRIVATE ZLAY_OS_BACKEND_SELECTED_COCOA=1)
+    target_sources(zlay PRIVATE ${ZLAY_OS_HEADERS} ${ZLAY_OS_CORE_SOURCES} ${ZLAY_OS_COCOA_SOURCES} ${ZLAY_OS_COCOA_HEADERS})
+    find_library(FOUNDATION_FRAMEWORK Foundation REQUIRED)
+    find_library(QUARTZCORE_FRAMEWORK QuartzCore REQUIRED)
+    if(CMAKE_SYSTEM_NAME STREQUAL "iOS")
+      find_library(UIKIT_FRAMEWORK UIKit REQUIRED)
+      target_link_libraries(zlay PRIVATE ${FOUNDATION_FRAMEWORK} ${QUARTZCORE_FRAMEWORK} ${UIKIT_FRAMEWORK})
+    else()
+      find_library(COCOA_FRAMEWORK Cocoa REQUIRED)
+      target_link_libraries(zlay PRIVATE ${FOUNDATION_FRAMEWORK} ${QUARTZCORE_FRAMEWORK} ${COCOA_FRAMEWORK})
+    endif()
   elseif(ZLAY_EFFECTIVE_OS_BACKEND STREQUAL "gtk")
-    target_sources(zlay PRIVATE ${ZLAY_OS_HEADERS} ${ZLAY_OS_GTK_SOURCES} ${ZLAY_OS_GTK_HEADERS})
+    target_compile_definitions(zlay PRIVATE ZLAY_OS_BACKEND_SELECTED_GTK=1)
+    target_sources(zlay PRIVATE ${ZLAY_OS_HEADERS} ${ZLAY_OS_CORE_SOURCES} ${ZLAY_OS_GTK_SOURCES} ${ZLAY_OS_GTK_HEADERS})
     if (UNIX AND NOT APPLE)
       target_link_libraries(zlay PRIVATE rt)
     endif()
   elseif(ZLAY_EFFECTIVE_OS_BACKEND STREQUAL "x11")
-    target_sources(zlay PRIVATE ${ZLAY_OS_HEADERS} ${ZLAY_OS_X11_SOURCES} ${ZLAY_OS_X11_HEADERS})
-    target_link_libraries(zlay PRIVATE rt)
+    find_package(X11 REQUIRED)
+    target_compile_definitions(zlay PRIVATE ZLAY_OS_BACKEND_SELECTED_X11=1)
+    target_sources(zlay PRIVATE ${ZLAY_OS_HEADERS} ${ZLAY_OS_CORE_SOURCES} ${ZLAY_OS_X11_SOURCES} ${ZLAY_OS_X11_HEADERS})
+    target_include_directories(zlay PRIVATE ${X11_INCLUDE_DIR})
+    target_link_libraries(zlay PRIVATE rt ${X11_LIBRARIES})
   else()
     message(FATAL_ERROR "Unknown ZLAY_OS_BACKEND='${ZLAY_OS_BACKEND}'")
   endif()

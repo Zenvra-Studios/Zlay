@@ -1,5 +1,5 @@
-#ifndef ZLAY_IMPL_X11_H
-#define ZLAY_IMPL_X11_H
+#ifndef ZLAY_OS_X11_ZLAY_X11_PLATFORM_H
+#define ZLAY_OS_X11_ZLAY_X11_PLATFORM_H
 
 #ifdef __cplusplus
 extern "C" {
