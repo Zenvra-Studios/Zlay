@@ -1,6 +1,6 @@
 # ZLay (Zen Layout + Styling Library)
 
-Native C layout & styling library concept untuk UI tools/engine editor berbasis OpenGL/Vulkan, dengan arah backend masa depan seperti WebGPU, Metal, Direct3D, software rasterizer, dan custom engine renderer.
+Native C/C++ layout & styling library concept untuk UI tools/engine editor berbasis OpenGL/Vulkan, dengan arah backend masa depan seperti WebGPU, Metal, Direct3D, software rasterizer, dan custom engine renderer.
 
 ZLay tidak membawa CSS runtime, DOM scripting, WebKit, atau Chromium. Core-nya menghasilkan layout dan render commands; backend yang menerjemahkan command itu ke platform/renderer yang dipilih.
 
