@@ -696,11 +696,9 @@ ZLAY_API ZLay_String ZLay_StringFromCString(const char *cstr);
 ZLAY_API const char *ZLay_DefaultFontFamily(void);
 ZLAY_API ZLay_String ZLay_DefaultFontFamilyString(void);
 
-ZLAY_API ZLay_Arena ZLay_CreateArenaWithCapacityAndMemory(size_t capacity,
-                                                          void *memory);
+ZLAY_API ZLay_Arena ZLay_CreateArenaWithCapacityAndMemory(size_t capacity, void *memory);
 ZLAY_API void ZLay_ArenaReset(ZLay_Arena *arena);
-ZLAY_API void *ZLay_ArenaAlloc(ZLay_Arena *arena, size_t size,
-                               size_t alignment);
+ZLAY_API void *ZLay_ArenaAlloc(ZLay_Arena *arena, size_t size, size_t alignment);
 
 ZLAY_API ZLay_Config ZLay_ConfigDefault(void);
 ZLAY_API size_t ZLay_MinMemorySize(ZLay_Config config);
@@ -710,77 +708,45 @@ ZLAY_API ZLay_Size ZLay_Px(float v);
 ZLAY_API ZLay_Size ZLay_Percent(float v);
 ZLAY_API ZLay_Size ZLay_Grow(float weight);
 ZLAY_API ZLay_EdgeInsets ZLay_EdgeInsetsAll(float value);
-ZLAY_API ZLay_EdgeInsets ZLay_EdgeInsetsSymmetric(float horizontal,
-                                                  float vertical);
-ZLAY_API ZLay_EdgeInsets ZLay_EdgeInsetsOnly(float left, float top, float right,
-                                             float bottom);
+ZLAY_API ZLay_EdgeInsets ZLay_EdgeInsetsSymmetric(float horizontal, float vertical);
+ZLAY_API ZLay_EdgeInsets ZLay_EdgeInsetsOnly(float left, float top, float right, float bottom);
 ZLAY_API ZLay_EdgeInsets ZLay_Insets(float all);
 ZLAY_API ZLay_EdgeInsets ZLay_InsetsXY(float x, float y);
-ZLAY_API ZLay_EdgeInsets ZLay_InsetsLTRB(float left, float top, float right,
-                                         float bottom);
-ZLAY_API ZLay_Style ZLay_StyleWithPadding(ZLay_Style style,
-                                          ZLay_EdgeInsets padding);
-ZLAY_API ZLay_Style ZLay_StyleWithMargin(ZLay_Style style,
-                                         ZLay_EdgeInsets margin);
-ZLAY_API ZLay_Style ZLay_StyleWithSize(ZLay_Style style, ZLay_Size width,
-                                       ZLay_Size height);
-ZLAY_API ZLay_Style ZLay_StyleWithBackground(ZLay_Style style,
-                                             ZLay_Color color);
+ZLAY_API ZLay_EdgeInsets ZLay_InsetsLTRB(float left, float top, float right, float bottom);
+ZLAY_API ZLay_Style ZLay_StyleWithPadding(ZLay_Style style, ZLay_EdgeInsets padding);
+ZLAY_API ZLay_Style ZLay_StyleWithMargin(ZLay_Style style, ZLay_EdgeInsets margin);
+ZLAY_API ZLay_Style ZLay_StyleWithSize(ZLay_Style style, ZLay_Size width, ZLay_Size height);
+ZLAY_API ZLay_Style ZLay_StyleWithBackground(ZLay_Style style, ZLay_Color color);
 ZLAY_API ZLay_Style ZLay_StyleWithRadius(ZLay_Style style, float radius);
-ZLAY_API ZLay_Style ZLay_StyleWithRounded(ZLay_Style style,
-                                          ZLay_Rounded rounded);
-ZLAY_API ZLay_Style ZLay_StyleWithRoundedPreset(ZLay_Style style,
-                                                ZLay_RoundedPreset preset);
+ZLAY_API ZLay_Style ZLay_StyleWithRounded(ZLay_Style style, ZLay_Rounded rounded);
+ZLAY_API ZLay_Style ZLay_StyleWithRoundedPreset(ZLay_Style style, ZLay_RoundedPreset preset);
 ZLAY_API ZLay_Shadow ZLay_ShadowNone(void);
-ZLAY_API ZLay_Shadow ZLay_ShadowMake(ZLay_Color color, float offset_x,
-                                     float offset_y, float blur, float spread);
+ZLAY_API ZLay_Shadow ZLay_ShadowMake(ZLay_Color color, float offset_x, float offset_y, float blur, float spread);
 ZLAY_API ZLay_Shadow ZLay_ShadowPresetValue(ZLay_ShadowPreset preset);
-ZLAY_API ZLay_Shadow ZLay_ShadowPx(float offset_x, float offset_y, float blur,
-                                   float spread, uint8_t alpha);
+ZLAY_API ZLay_Shadow ZLay_ShadowPx(float offset_x, float offset_y, float blur, float spread, uint8_t alpha);
 ZLAY_API ZLay_Shadow ZLay_ShadowFloating(void);
-ZLAY_API ZLay_Style ZLay_StyleWithBorder(ZLay_Style style, float width,
-                                         ZLay_Color color);
+ZLAY_API ZLay_Style ZLay_StyleWithBorder(ZLay_Style style, float width, ZLay_Color color);
 ZLAY_API ZLay_Style ZLay_StyleWithShadow(ZLay_Style style, ZLay_Shadow shadow);
-ZLAY_API ZLay_Style ZLay_StyleWithShadowPreset(ZLay_Style style,
-                                               ZLay_ShadowPreset preset);
+ZLAY_API ZLay_Style ZLay_StyleWithShadowPreset(ZLay_Style style, ZLay_ShadowPreset preset);
 ZLAY_API ZLay_Style ZLay_StyleWithGap(ZLay_Style style, float gap);
-ZLAY_API ZLay_Style ZLay_StyleWithDirection(ZLay_Style style,
-                                            ZLay_FlexDirection direction);
-ZLAY_API ZLay_Style ZLay_StyleWithGrid(ZLay_Style style, uint32_t columns,
-                                       ZLay_Size auto_row_height,
-                                       float column_gap, float row_gap);
-ZLAY_API ZLay_Style ZLay_StyleWithGridSpan(ZLay_Style style,
-                                           uint32_t column_span,
-                                           uint32_t row_span);
-ZLAY_API ZLay_Style ZLay_StyleWithColors(ZLay_Style style,
-                                         ZLay_Color background,
-                                         ZLay_Color text);
-ZLAY_API ZLay_Style ZLay_StyleWithFont(ZLay_Style style, ZLay_String family,
-                                       float size);
-ZLAY_API ZLay_Style ZLay_StyleWithPointerCursor(ZLay_Style style,
-                                                ZLay_PointerCursor cursor);
-ZLAY_API ZLay_Style ZLay_StyleWithTextCursor(ZLay_Style style, bool visible,
-                                             uint32_t index, ZLay_Color color);
-ZLAY_API ZLay_Style ZLay_StyleWithTextSelection(ZLay_Style style,
-                                                uint32_t start, uint32_t end,
-                                                ZLay_Color color);
+ZLAY_API ZLay_Style ZLay_StyleWithDirection(ZLay_Style style, ZLay_FlexDirection direction);
+ZLAY_API ZLay_Style ZLay_StyleWithGrid(ZLay_Style style, uint32_t columns, ZLay_Size auto_row_height, float column_gap, float row_gap);
+ZLAY_API ZLay_Style ZLay_StyleWithGridSpan(ZLay_Style style, uint32_t column_span, uint32_t row_span);
+ZLAY_API ZLay_Style ZLay_StyleWithColors(ZLay_Style style, ZLay_Color background, ZLay_Color text);
+ZLAY_API ZLay_Style ZLay_StyleWithFont(ZLay_Style style, ZLay_String family, float size);
+ZLAY_API ZLay_Style ZLay_StyleWithPointerCursor(ZLay_Style style, ZLay_PointerCursor cursor);
+ZLAY_API ZLay_Style ZLay_StyleWithTextCursor(ZLay_Style style, bool visible, uint32_t index, ZLay_Color color);
+ZLAY_API ZLay_Style ZLay_StyleWithTextSelection(ZLay_Style style, uint32_t start, uint32_t end, ZLay_Color color);
 ZLAY_API ZLay_Style ZLay_RowStyle(ZLay_Size width, ZLay_Size height, float gap);
-ZLAY_API ZLay_Style ZLay_ColumnStyle(ZLay_Size width, ZLay_Size height,
-                                     float gap);
-ZLAY_API ZLay_Style ZLay_GridStyle(ZLay_Size width, ZLay_Size height,
-                                   uint32_t columns, ZLay_Size auto_row_height,
-                                   float gap);
+ZLAY_API ZLay_Style ZLay_ColumnStyle(ZLay_Size width, ZLay_Size height, float gap);
+ZLAY_API ZLay_Style ZLay_GridStyle(ZLay_Size width, ZLay_Size height, uint32_t columns, ZLay_Size auto_row_height, float gap);
 ZLAY_API ZLay_Theme ZLay_ThemeLight(void);
 ZLAY_API ZLay_Theme ZLay_ThemeDark(void);
 ZLAY_API const ZLay_Theme *ZLay_ThemeDefault(void);
-ZLAY_API float ZLay_ComponentControlHeight(ZLay_ComponentSize size,
-                                           const ZLay_Theme *theme);
-ZLAY_API ZLay_EdgeInsets ZLay_ComponentControlPadding(ZLay_ComponentSize size,
-                                                      const ZLay_Theme *theme);
-ZLAY_API ZLay_Style ZLay_StackStyle(ZLay_FlexDirection direction, float gap,
-                                    ZLay_EdgeInsets padding);
-ZLAY_API ZLay_Style ZLay_SurfaceStyle(ZLay_SurfaceVariant variant,
-                                      const ZLay_Theme *theme);
+ZLAY_API float ZLay_ComponentControlHeight(ZLay_ComponentSize size, const ZLay_Theme *theme);
+ZLAY_API ZLay_EdgeInsets ZLay_ComponentControlPadding(ZLay_ComponentSize size, const ZLay_Theme *theme);
+ZLAY_API ZLay_Style ZLay_StackStyle(ZLay_FlexDirection direction, float gap, ZLay_EdgeInsets padding);
+ZLAY_API ZLay_Style ZLay_SurfaceStyle(ZLay_SurfaceVariant variant, const ZLay_Theme *theme);
 ZLAY_API ZLay_Style ZLay_CardStyle(const ZLay_Theme *theme);
 ZLAY_API ZLay_Style ZLay_SpacerStyle(float size, ZLay_Axis axis);
 ZLAY_API ZLay_Style ZLay_DividerStyle(ZLay_Axis axis, const ZLay_Theme *theme);
@@ -789,75 +755,48 @@ ZLAY_API ZLay_Context *ZLay_Initialize(ZLay_Arena arena, ZLay_Config config);
 ZLAY_API void ZLay_SetLayoutDimensions(ZLay_Context *ctx, ZLay_Dimensions dims);
 
 typedef ZLay_Dimensions (*ZLay_MeasureTextFn)(ZLay_String text, void *user);
-ZLAY_API void ZLay_SetMeasureTextFunction(ZLay_Context *ctx,
-                                          ZLay_MeasureTextFn fn, void *user);
-ZLAY_API bool ZLay_ContextFindBounds(const ZLay_Context *ctx, ZLay_Id id,
-                                     ZLay_Rect *out_bounds);
+ZLAY_API void ZLay_SetMeasureTextFunction(ZLay_Context *ctx, ZLay_MeasureTextFn fn, void *user);
+ZLAY_API bool ZLay_ContextFindBounds(const ZLay_Context *ctx, ZLay_Id id, ZLay_Rect *out_bounds);
 
 ZLAY_API void ZLay_BeginLayout(ZLay_Context *ctx);
 ZLAY_API ZLay_RenderCommandList ZLay_EndLayout(ZLay_Context *ctx);
 
 // Low-level open/config/close (used by macros)
-ZLAY_API void ZLay__OpenElement(ZLay_Context *ctx, ZLay_Id id,
-                                ZLay_NodeType type);
-ZLAY_API void ZLay__ConfigureOpenElement(ZLay_Context *ctx,
-                                         const ZLay_NodeDeclaration *decl);
+ZLAY_API void ZLay__OpenElement(ZLay_Context *ctx, ZLay_Id id, ZLay_NodeType type);
+ZLAY_API void ZLay__ConfigureOpenElement(ZLay_Context *ctx, const ZLay_NodeDeclaration *decl);
 ZLAY_API void ZLay__CloseElement(ZLay_Context *ctx);
-ZLAY_API void ZLay__OpenTextElement(ZLay_Context *ctx, ZLay_Id id,
-                                    ZLay_String text, const ZLay_Style *style);
+ZLAY_API void ZLay__OpenTextElement(ZLay_Context *ctx, ZLay_Id id, ZLay_String text, const ZLay_Style *style);
 
 // Helpers for macro-friendly struct init
 ZLAY_API ZLay_NodeDeclarationBuilder ZLay_BoxDecl(ZLay_Id id, ZLay_Style style);
-ZLAY_API ZLay_NodeDeclarationBuilder ZLay_TextDecl(ZLay_Id id, ZLay_String text,
-                                                   ZLay_Style style);
-ZLAY_API ZLay_NodeDeclarationBuilder ZLay_RowDecl(ZLay_Id id, float gap,
-                                                  ZLay_EdgeInsets padding);
-ZLAY_API ZLay_NodeDeclarationBuilder ZLay_ColumnDecl(ZLay_Id id, float gap,
-                                                     ZLay_EdgeInsets padding);
-ZLAY_API ZLay_NodeDeclarationBuilder ZLay_GridDecl(ZLay_Id id, uint32_t columns,
-                                                   ZLay_Size auto_row_height,
-                                                   float gap,
-                                                   ZLay_EdgeInsets padding);
-ZLAY_API ZLay_NodeDeclarationBuilder ZLay_PanelDecl(ZLay_Id id,
-                                                    const ZLay_Theme *theme);
-ZLAY_API ZLay_NodeDeclarationBuilder ZLay_CardDecl(ZLay_Id id,
-                                                   const ZLay_Theme *theme);
-ZLAY_API ZLay_NodeDeclarationBuilder ZLay_SpacerDecl(ZLay_Id id, float size,
-                                                     ZLay_Axis axis);
-ZLAY_API ZLay_NodeDeclarationBuilder ZLay_DividerDecl(ZLay_Id id,
-                                                      ZLay_Axis axis,
-                                                      const ZLay_Theme *theme);
+ZLAY_API ZLay_NodeDeclarationBuilder ZLay_TextDecl(ZLay_Id id, ZLay_String text, ZLay_Style style);
+ZLAY_API ZLay_NodeDeclarationBuilder ZLay_RowDecl(ZLay_Id id, float gap, ZLay_EdgeInsets padding);
+ZLAY_API ZLay_NodeDeclarationBuilder ZLay_ColumnDecl(ZLay_Id id, float gap, ZLay_EdgeInsets padding);
+ZLAY_API ZLay_NodeDeclarationBuilder ZLay_GridDecl(ZLay_Id id, uint32_t columns, ZLay_Size auto_row_height, float gap, ZLay_EdgeInsets padding);
+ZLAY_API ZLay_NodeDeclarationBuilder ZLay_PanelDecl(ZLay_Id id, const ZLay_Theme *theme);
+ZLAY_API ZLay_NodeDeclarationBuilder ZLay_CardDecl(ZLay_Id id, const ZLay_Theme *theme);
+ZLAY_API ZLay_NodeDeclarationBuilder ZLay_SpacerDecl(ZLay_Id id, float size, ZLay_Axis axis);
+ZLAY_API ZLay_NodeDeclarationBuilder ZLay_DividerDecl(ZLay_Id id, ZLay_Axis axis, const ZLay_Theme *theme);
 
-ZLAY_API void ZLay_Spacer(ZLay_Context *ctx, ZLay_Id id, float size,
-                          ZLay_Axis axis);
-ZLAY_API void ZLay_Divider(ZLay_Context *ctx, ZLay_Id id, ZLay_Axis axis,
-                           const ZLay_Theme *theme);
+ZLAY_API void ZLay_Spacer(ZLay_Context *ctx, ZLay_Id id, float size, ZLay_Axis axis);
+ZLAY_API void ZLay_Divider(ZLay_Context *ctx, ZLay_Id id, ZLay_Axis axis, const ZLay_Theme *theme);
 
 ZLAY_API bool ZLay_RectContains(ZLay_Rect rect, float x, float y);
-ZLAY_API bool ZLay_RenderCommandListFindBounds(ZLay_RenderCommandList commands,
-                                               ZLay_Id id,
-                                               ZLay_Rect *out_bounds);
-ZLAY_API ZLay_PointerCursor ZLay_RenderCommandListCursorAt(
-    ZLay_RenderCommandList commands, float x, float y);
-ZLAY_API uint32_t ZLay_ComponentStateFromPointer(
-    const ZLay_PointerState *pointer, ZLay_Rect bounds, bool tracked);
+ZLAY_API bool ZLay_RenderCommandListFindBounds(ZLay_RenderCommandList commands, ZLay_Id id, ZLay_Rect *out_bounds);
+ZLAY_API ZLay_PointerCursor ZLay_RenderCommandListCursorAt(ZLay_RenderCommandList commands, float x, float y);
+ZLAY_API uint32_t ZLay_ComponentStateFromPointer(const ZLay_PointerState *pointer, ZLay_Rect bounds, bool tracked);
 
 ZLAY_API ZLay_AppConfig ZLay_AppConfigDefault(void);
-ZLAY_API bool ZLay_AppInit(ZLay_App *app, ZLay_Context *layout,
-                           ZLay_AppConfig config);
-ZLAY_API bool ZLay_AppSetLifecycleState(ZLay_App *app,
-                                        ZLay_AppLifecycleState state);
+ZLAY_API bool ZLay_AppInit(ZLay_App *app, ZLay_Context *layout, ZLay_AppConfig config);
+ZLAY_API bool ZLay_AppSetLifecycleState(ZLay_App *app, ZLay_AppLifecycleState state);
 ZLAY_API void ZLay_AppSetTheme(ZLay_App *app, ZLay_Theme theme);
 ZLAY_API const ZLay_Theme *ZLay_AppTheme(const ZLay_App *app);
 ZLAY_API void ZLay_AppMarkNeedsBuild(ZLay_App *app);
 ZLAY_API bool ZLay_AppNeedsBuild(const ZLay_App *app);
-ZLAY_API bool ZLay_AppBeginFrame(ZLay_App *app, ZLay_Dimensions viewport,
-                                 double delta_ms);
+ZLAY_API bool ZLay_AppBeginFrame(ZLay_App *app, ZLay_Dimensions viewport, double delta_ms);
 ZLAY_API bool ZLay_AppBuild(ZLay_App *app);
 ZLAY_API ZLay_RenderCommandList ZLay_AppEndFrame(ZLay_App *app);
-ZLAY_API ZLay_RenderCommandList ZLay_AppRunFrame(ZLay_App *app,
-                                                 ZLay_Dimensions viewport,
-                                                 double delta_ms);
+ZLAY_API ZLay_RenderCommandList ZLay_AppRunFrame(ZLay_App *app, ZLay_Dimensions viewport, double delta_ms);
 
 ZLAY_API bool ZLay_NavigatorPush(ZLay_App *app, ZLay_Route route);
 ZLAY_API bool ZLay_NavigatorReplace(ZLay_App *app, ZLay_Route route);
@@ -871,22 +810,17 @@ ZLAY_API ZLay_StateValue ZLay_StateInt(int64_t value);
 ZLAY_API ZLay_StateValue ZLay_StateFloat(double value);
 ZLAY_API ZLay_StateValue ZLay_StateString(ZLay_String value);
 ZLAY_API ZLay_StateValue ZLay_StatePointer(void *value);
-ZLAY_API ZLay_StateSlot *ZLay_AppUseState(ZLay_App *app, ZLay_Id key,
-                                          ZLay_StateValue initial_value);
-ZLAY_API const ZLay_StateSlot *ZLay_AppFindState(const ZLay_App *app,
-                                                 ZLay_Id key);
-ZLAY_API bool ZLay_AppSetStateValue(ZLay_App *app, ZLay_Id key,
-                                    ZLay_StateValue value);
+ZLAY_API ZLay_StateSlot *ZLay_AppUseState(ZLay_App *app, ZLay_Id key, ZLay_StateValue initial_value);
+ZLAY_API const ZLay_StateSlot *ZLay_AppFindState(const ZLay_App *app, ZLay_Id key);
+ZLAY_API bool ZLay_AppSetStateValue(ZLay_App *app, ZLay_Id key, ZLay_StateValue value);
 ZLAY_API bool ZLay_AppClearState(ZLay_App *app, ZLay_Id key);
 
-ZLAY_API void ZLay_AnimationControllerInit(ZLay_AnimationController *controller,
-                                           double duration_ms);
+ZLAY_API void ZLay_AnimationControllerInit(ZLay_AnimationController *controller, double duration_ms);
 ZLAY_API void ZLay_AnimationForward(ZLay_AnimationController *controller);
 ZLAY_API void ZLay_AnimationReverse(ZLay_AnimationController *controller);
 ZLAY_API void ZLay_AnimationStop(ZLay_AnimationController *controller);
 ZLAY_API void ZLay_AnimationReset(ZLay_AnimationController *controller);
-ZLAY_API bool ZLay_AnimationTick(ZLay_AnimationController *controller,
-                                 double delta_ms);
+ZLAY_API bool ZLay_AnimationTick(ZLay_AnimationController *controller, double delta_ms);
 ZLAY_API float ZLay_AnimationValue(const ZLay_AnimationController *controller);
 
 #ifdef __cplusplus
