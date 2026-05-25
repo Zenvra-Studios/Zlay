@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.24)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE BOOL "Export compile_commands.json for clangd and other language servers")
 
-project(ZLay VERSION 0.1.0 LANGUAGES C CXX)
+project(Zlay VERSION 0.1.0 LANGUAGES C CXX)
 
 include(GNUInstallDirs)
 
