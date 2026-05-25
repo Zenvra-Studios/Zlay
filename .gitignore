@@ -2,6 +2,8 @@
 /.vscode/*
 !/.vscode/tasks.json
 
+/.codex/*
+
 compile_commands.json
 __pycache__/
 
