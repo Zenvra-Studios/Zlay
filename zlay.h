@@ -3,7 +3,7 @@
 
   Copyright (c) 2026 Zenvra Studio
 
-  License: GNU GPL (Vendor: Zenvra Studio)
+  License: GNU GPL (Vendor: Zenvra Studio - Ahmad Zani Syechkar)
   SPDX-License-Identifier: GPL-3.0-or-later
 */
 
@@ -760,6 +760,8 @@ ZLAY_API bool ZLay_ContextFindBounds(const ZLay_Context *ctx, ZLay_Id id, ZLay_R
 
 ZLAY_API void ZLay_BeginLayout(ZLay_Context *ctx);
 ZLAY_API ZLay_RenderCommandList ZLay_EndLayout(ZLay_Context *ctx);
+ZLAY_API void ZLay_BeginFrame(ZLay_Context *ctx);
+ZLAY_API ZLay_RenderCommandList ZLay_EndFrame(ZLay_Context *ctx);
 
 // Low-level open/config/close (used by macros)
 ZLAY_API void ZLay__OpenElement(ZLay_Context *ctx, ZLay_Id id, ZLay_NodeType type);
@@ -780,6 +782,8 @@ ZLAY_API ZLay_NodeDeclarationBuilder ZLay_DividerDecl(ZLay_Id id, ZLay_Axis axis
 
 ZLAY_API void ZLay_Spacer(ZLay_Context *ctx, ZLay_Id id, float size, ZLay_Axis axis);
 ZLAY_API void ZLay_Divider(ZLay_Context *ctx, ZLay_Id id, ZLay_Axis axis, const ZLay_Theme *theme);
+ZLAY_API void ZLay_Panel(ZLay_Context *ctx, ZLay_Id id, const ZLay_Theme *theme);
+ZLAY_API void ZLay_Text(ZLay_Context *ctx, ZLay_Id id, ZLay_String text, const ZLay_Style *style);
 
 ZLAY_API bool ZLay_RectContains(ZLay_Rect rect, float x, float y);
 ZLAY_API bool ZLay_RenderCommandListFindBounds(ZLay_RenderCommandList commands, ZLay_Id id, ZLay_Rect *out_bounds);

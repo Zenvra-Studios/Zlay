@@ -14,6 +14,8 @@ option(ZLAY_BUILD_LIFECYCLE "Build ZLay lifecycle, autosave, journal, and recove
 option(ZLAY_BUILD_PARSER "Build ZLay DSL parser frontend" ON)
 option(ZLAY_BUILD_RENDERER "Build ZLay renderer abstraction" ON)
 option(ZLAY_BUILD_SHADERS "Build ZLay built-in shader sources" ON)
+option(ZLAY_USE_CLAY_BACKEND "Use Clay as optional third-party layout backend" ON)
+option(ZLAY_VENDOR_CLAY "Use vendored Clay from lib/clay.h" ON)
 option(ZLAY_CLANGD_COPY_COMPILE_COMMANDS "Copy compile_commands.json to the source root for clangd" ${PROJECT_IS_TOP_LEVEL})
 set(ZLAY_HEADER_TEMPLATE_STYLE "ifndef" CACHE STRING "Default generated header style: ifndef, pragma_once, both")
 set_property(CACHE ZLAY_HEADER_TEMPLATE_STYLE PROPERTY STRINGS ifndef pragma_once both)
@@ -71,6 +73,16 @@ file(GLOB ZLAY_UI_SOURCES CONFIGURE_DEPENDS
   ${ZLAY_SOURCE_DIR}/ui/*.c
 )
 list(SORT ZLAY_UI_SOURCES)
+
+file(GLOB_RECURSE ZLAY_BACKEND_CLAY_SOURCES CONFIGURE_DEPENDS
+  ${CMAKE_CURRENT_SOURCE_DIR}/backend/clay/*.c
+)
+list(SORT ZLAY_BACKEND_CLAY_SOURCES)
+
+file(GLOB_RECURSE ZLAY_BACKEND_CLAY_HEADERS CONFIGURE_DEPENDS
+  ${CMAKE_CURRENT_SOURCE_DIR}/backend/clay/*.h
+)
+list(SORT ZLAY_BACKEND_CLAY_HEADERS)
 
 file(GLOB ZLAY_RENDERER_SOURCES CONFIGURE_DEPENDS
   ${ZLAY_SOURCE_DIR}/renderer/*.c
@@ -269,6 +281,19 @@ target_sources(zlay
     ${ZLAY_UI_SOURCES}
     ${ZLAY_UI_HEADERS}
 )
+
+if (ZLAY_USE_CLAY_BACKEND)
+  message(STATUS "Zlay: Clay backend enabled")
+  if (ZLAY_VENDOR_CLAY)
+    message(STATUS "Zlay: Using vendored Clay")
+  endif()
+  target_sources(zlay PRIVATE ${ZLAY_BACKEND_CLAY_SOURCES} ${ZLAY_BACKEND_CLAY_HEADERS})
+
+  add_library(z_clay INTERFACE)
+  add_library(zlay::clay ALIAS z_clay)
+  set_target_properties(z_clay PROPERTIES EXPORT_NAME clay)
+  target_link_libraries(z_clay INTERFACE zlay)
+endif()
 
 target_include_directories(zlay
   PUBLIC

@@ -300,3 +300,14 @@ void ZLay_Spacer(ZLay_Context* ctx, ZLay_Id id, float size, ZLay_Axis axis) {
 void ZLay_Divider(ZLay_Context* ctx, ZLay_Id id, ZLay_Axis axis, const ZLay_Theme* theme) {
   ZLay__EmitBox(ctx, id, ZLay_DividerStyle(axis, theme));
 }
+
+void ZLay_Panel(ZLay_Context* ctx, ZLay_Id id, const ZLay_Theme* theme) {
+  ZLay_NodeDeclarationBuilder builder = ZLay_PanelDecl(id, theme);
+  ZLay__OpenElement(ctx, id, ZLAY_NODE_BOX);
+  ZLay__ConfigureOpenElement(ctx, &builder.decl);
+  ZLay__CloseElement(ctx);
+}
+
+void ZLay_Text(ZLay_Context* ctx, ZLay_Id id, ZLay_String text, const ZLay_Style* style) {
+  ZLay__OpenTextElement(ctx, id, text, style);
+}

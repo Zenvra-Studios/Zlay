@@ -218,3 +218,11 @@ ZLay_RenderCommandList ZLay_EndLayout(ZLay_Context* ctx) {
   list.count = ctx->command_count;
   return list;
 }
+
+void ZLay_BeginFrame(ZLay_Context* ctx) {
+  ZLay_BeginLayout(ctx);
+}
+
+ZLay_RenderCommandList ZLay_EndFrame(ZLay_Context* ctx) {
+  return ZLay_EndLayout(ctx);
+}

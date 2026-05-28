@@ -14,6 +14,7 @@ foreach(_ZLAY_TARGET IN ITEMS
   zlay_driver
   zlay_driver_opengl
   zlay_driver_vulkan
+  z_clay
   zlay_os
 )
   if(TARGET ${_ZLAY_TARGET})
@@ -62,6 +63,15 @@ if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/include")
     FILES_MATCHING
       PATTERN "*.h"
       PATTERN "*.hpp"
+  )
+endif()
+
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/backend")
+  install(
+    DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/backend/"
+    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/backend"
+    FILES_MATCHING
+      PATTERN "*.h"
   )
 endif()
 
