@@ -1,7 +1,5 @@
 # Contributing to Zlay
 
-Thank you for your interest in contributing to Zlay.
-
 Zlay is a declarative UI and layout engine written in C/C++. The goal of this project is to provide a small, portable, and understandable UI/layout foundation that can be used with different rendering backends.
 
 This project is still in early development, so the API, file structure, and internal design may change.
