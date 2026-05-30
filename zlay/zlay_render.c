@@ -36,6 +36,7 @@ static void ZLay__PushTextRectCommand(
   if (ctx->command_count >= ctx->config.max_commands || bounds.width <= 0.0f || bounds.height <= 0.0f) return;
 
   c = &ctx->commands[ctx->command_count++];
+  *c = (ZLay_RenderCommand){0};
   c->type = ZLAY_CMD_RECT;
   c->id = id;
   c->bounds = bounds;
@@ -55,6 +56,7 @@ static void ZLay__PushTextRectCommand(
 static void ZLay__PushRectCommand(ZLay_Context* ctx, const ZLay_Node* n) {
   if (ctx->command_count >= ctx->config.max_commands) return;
   ZLay_RenderCommand* c = &ctx->commands[ctx->command_count++];
+  *c = (ZLay_RenderCommand){0};
   c->type = ZLAY_CMD_RECT;
   c->id = n->id;
   c->bounds = n->layout;
@@ -74,6 +76,7 @@ static void ZLay__PushRectCommand(ZLay_Context* ctx, const ZLay_Node* n) {
 static void ZLay__PushTextCommand(ZLay_Context* ctx, const ZLay_Node* n) {
   if (ctx->command_count >= ctx->config.max_commands) return;
   ZLay_RenderCommand* c = &ctx->commands[ctx->command_count++];
+  *c = (ZLay_RenderCommand){0};
   c->type = ZLAY_CMD_TEXT;
   c->id = n->id;
   c->bounds = n->layout;

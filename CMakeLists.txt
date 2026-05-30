@@ -14,20 +14,130 @@ option(ZLAY_BUILD_LIFECYCLE "Build ZLay lifecycle, autosave, journal, and recove
 option(ZLAY_BUILD_PARSER "Build ZLay DSL parser frontend" ON)
 option(ZLAY_BUILD_RENDERER "Build ZLay renderer abstraction" ON)
 option(ZLAY_BUILD_SHADERS "Build ZLay built-in shader sources" ON)
-option(ZLAY_USE_CLAY_BACKEND "Use Clay as optional third-party layout backend" ON)
-option(ZLAY_VENDOR_CLAY "Use vendored Clay from lib/clay.h" ON)
+option(ZLAY_ENABLE_COMPONENTS "Enable Zlay C++ component layer" ON)
+option(ZLAY_ENABLE_COMPONENTS_META "Enable metaprogramming utilities" ON)
+option(ZLAY_ENABLE_COMPONENTS_TOOLING "Enable engine tooling components" ON)
+option(ZLAY_ENABLE_COMPONENTS_VIEWPORT "Enable viewport components" ON)
+option(ZLAY_ENABLE_COMPONENTS_SCENE "Enable scene components" ON)
+option(ZLAY_ENABLE_COMPONENTS_INSPECTOR "Enable inspector components" ON)
+option(ZLAY_ENABLE_COMPONENTS_ASSETS "Enable asset components" ON)
+option(ZLAY_ENABLE_COMPONENTS_GRAPH "Enable graph components" ON)
+option(ZLAY_ENABLE_COMPONENTS_TIMELINE "Enable timeline components" ON)
+option(ZLAY_ENABLE_BACKEND_CLAY "Enable Clay layout backend" ON)
+option(ZLAY_ENABLE_RENDERER_OPENGL "Enable OpenGL renderer backend" ON)
+option(ZLAY_ENABLE_RENDERER_VULKAN "Enable Vulkan renderer backend" OFF)
+option(ZLAY_ENABLE_RENDERER_IMGUI "Enable Dear ImGui renderer backend" OFF)
+option(ZLAY_ENABLE_RENDERER_SOKOL "Enable sokol renderer backend" OFF)
+option(ZLAY_ENABLE_RENDERER_RAYLIB "Enable raylib renderer backend" OFF)
+option(ZLAY_ENABLE_CANVAS "Enable Zlay Canvas rendering abstraction" ON)
+option(ZLAY_ENABLE_CANVAS_PATH "Enable Canvas path drawing" ON)
+option(ZLAY_ENABLE_CANVAS_TEXT "Enable Canvas text drawing" ON)
+option(ZLAY_ENABLE_CANVAS_IMAGE "Enable Canvas image drawing" ON)
+option(ZLAY_ENABLE_CANVAS_GRADIENT "Enable Canvas gradient drawing" OFF)
+option(ZLAY_ENABLE_PLATFORM_GLFW "Enable GLFW platform backend" OFF)
+option(ZLAY_ENABLE_PLATFORM_RAYLIB "Enable raylib platform backend" OFF)
+option(ZLAY_ENABLE_PLATFORM_SOKOL "Enable sokol platform backend" OFF)
+option(ZLAY_ENABLE_PLATFORM_WIN32 "Enable Win32 platform backend" ON)
+option(ZLAY_ENABLE_PLATFORM_X11 "Enable X11 platform backend" ON)
+option(ZLAY_ENABLE_PLATFORM_COCOA "Enable Cocoa platform backend" ON)
+option(ZLAY_ENABLE_DRIVER_OPENGL "Enable OpenGL GPU driver" ON)
+option(ZLAY_ENABLE_DRIVER_VULKAN "Enable Vulkan GPU driver" OFF)
+option(ZLAY_ENABLE_DRIVER_WEBGPU "Enable WebGPU GPU driver" OFF)
+option(ZLAY_ENABLE_DRIVER_METAL "Enable Metal GPU driver" OFF)
+option(ZLAY_ENABLE_DRIVER_D3D12 "Enable Direct3D 12 GPU driver" OFF)
+option(ZLAY_USE_CLAY_BACKEND "Deprecated alias for ZLAY_ENABLE_BACKEND_CLAY" ${ZLAY_ENABLE_BACKEND_CLAY})
+option(ZLAY_VENDOR_CLAY "Use vendored Clay from third_party/clay/clay.h" ON)
 option(ZLAY_CLANGD_COPY_COMPILE_COMMANDS "Copy compile_commands.json to the source root for clangd" ${PROJECT_IS_TOP_LEVEL})
 set(ZLAY_HEADER_TEMPLATE_STYLE "ifndef" CACHE STRING "Default generated header style: ifndef, pragma_once, both")
 set_property(CACHE ZLAY_HEADER_TEMPLATE_STYLE PROPERTY STRINGS ifndef pragma_once both)
 set(ZLAY_HEADER_TEMPLATE_INCLUDE "zlay.h" CACHE STRING "Default include used by generated ZLay headers; empty disables the include")
 option(ZLAY_HEADER_TEMPLATE_EXTERN_C "Wrap generated ZLay headers with extern C guards" ON)
 set(ZLAY_NEW_HEADER_PATH "" CACHE FILEPATH "Header path used by the zlay_generate_header target")
+set(ZLAY_COMPONENTS_CPP_STANDARD "11" CACHE STRING "C++ standard for components")
+set_property(CACHE ZLAY_COMPONENTS_CPP_STANDARD PROPERTY STRINGS 11 14 17 20)
 set(ZLAY_OS_BACKEND "auto" CACHE STRING "Platform backend: auto, x11, gtk, win32, cocoa")
 set_property(CACHE ZLAY_OS_BACKEND PROPERTY STRINGS auto x11 gtk win32 cocoa)
 option(ZLAY_ENABLE_WINRT_SUPPORT "Build Windows 10/11 modern system support helpers on top of Win32" ON)
 
 set(ZLAY_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/zlay)
+set(ZLAY_THIRD_PARTY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third_party)
 set(ZLAY_SHADER_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/shader)
+set(ZLAY_PLATFORM_BACKEND_DIR ${ZLAY_SOURCE_DIR}/backends/platform)
+
+set(ZLAY_EFFECTIVE_BACKEND_CLAY ${ZLAY_ENABLE_BACKEND_CLAY})
+if (NOT ZLAY_USE_CLAY_BACKEND)
+  set(ZLAY_EFFECTIVE_BACKEND_CLAY OFF)
+endif()
+
+set(ZLAY_EFFECTIVE_RENDERER_OPENGL OFF)
+set(ZLAY_EFFECTIVE_RENDERER_VULKAN OFF)
+set(ZLAY_EFFECTIVE_CANVAS OFF)
+if (ZLAY_BUILD_RENDERER AND ZLAY_BUILD_DRIVERS AND ZLAY_ENABLE_RENDERER_OPENGL)
+  set(ZLAY_EFFECTIVE_RENDERER_OPENGL ON)
+endif()
+if (ZLAY_BUILD_RENDERER AND ZLAY_BUILD_DRIVERS AND ZLAY_ENABLE_RENDERER_VULKAN)
+  set(ZLAY_EFFECTIVE_RENDERER_VULKAN ON)
+endif()
+if (ZLAY_BUILD_RENDERER AND ZLAY_ENABLE_CANVAS)
+  set(ZLAY_EFFECTIVE_CANVAS ON)
+endif()
+
+set(ZLAY_EFFECTIVE_DRIVER_OPENGL OFF)
+set(ZLAY_EFFECTIVE_DRIVER_VULKAN OFF)
+if (ZLAY_BUILD_DRIVERS AND ZLAY_ENABLE_DRIVER_OPENGL)
+  set(ZLAY_EFFECTIVE_DRIVER_OPENGL ON)
+endif()
+if (ZLAY_BUILD_DRIVERS AND ZLAY_ENABLE_DRIVER_VULKAN)
+  set(ZLAY_EFFECTIVE_DRIVER_VULKAN ON)
+endif()
+
+if (ZLAY_EFFECTIVE_RENDERER_OPENGL AND NOT ZLAY_EFFECTIVE_DRIVER_OPENGL)
+  message(FATAL_ERROR "ZLAY_ENABLE_RENDERER_OPENGL requires ZLAY_ENABLE_DRIVER_OPENGL")
+endif()
+
+if (ZLAY_EFFECTIVE_RENDERER_VULKAN AND NOT ZLAY_EFFECTIVE_DRIVER_VULKAN)
+  message(FATAL_ERROR "ZLAY_ENABLE_RENDERER_VULKAN requires ZLAY_ENABLE_DRIVER_VULKAN")
+endif()
+
+if ((ZLAY_EFFECTIVE_RENDERER_OPENGL OR ZLAY_EFFECTIVE_RENDERER_VULKAN) AND NOT ZLAY_BUILD_SHADERS)
+  message(FATAL_ERROR "OpenGL/Vulkan renderer backends require ZLAY_BUILD_SHADERS")
+endif()
+
+if (ZLAY_ENABLE_RENDERER_IMGUI)
+  message(FATAL_ERROR "ZLAY_ENABLE_RENDERER_IMGUI is reserved until the Dear ImGui renderer backend is implemented")
+endif()
+
+if (ZLAY_ENABLE_RENDERER_SOKOL)
+  message(FATAL_ERROR "ZLAY_ENABLE_RENDERER_SOKOL is reserved until the sokol renderer backend is implemented")
+endif()
+
+if (ZLAY_ENABLE_RENDERER_RAYLIB)
+  message(FATAL_ERROR "ZLAY_ENABLE_RENDERER_RAYLIB is reserved until the raylib renderer backend is implemented")
+endif()
+
+if (ZLAY_ENABLE_PLATFORM_GLFW)
+  message(FATAL_ERROR "ZLAY_ENABLE_PLATFORM_GLFW is reserved until the GLFW platform backend is implemented")
+endif()
+
+if (ZLAY_ENABLE_PLATFORM_RAYLIB)
+  message(FATAL_ERROR "ZLAY_ENABLE_PLATFORM_RAYLIB is reserved until the raylib platform backend is implemented")
+endif()
+
+if (ZLAY_ENABLE_PLATFORM_SOKOL)
+  message(FATAL_ERROR "ZLAY_ENABLE_PLATFORM_SOKOL is reserved until the sokol platform backend is implemented")
+endif()
+
+if (ZLAY_ENABLE_DRIVER_WEBGPU)
+  message(FATAL_ERROR "ZLAY_ENABLE_DRIVER_WEBGPU is reserved until the WebGPU GPU driver is implemented")
+endif()
+
+if (ZLAY_ENABLE_DRIVER_METAL)
+  message(FATAL_ERROR "ZLAY_ENABLE_DRIVER_METAL is reserved until the Metal GPU driver is implemented")
+endif()
+
+if (ZLAY_ENABLE_DRIVER_D3D12)
+  message(FATAL_ERROR "ZLAY_ENABLE_DRIVER_D3D12 is reserved until the Direct3D 12 GPU driver is implemented")
+endif()
 
 set(ZLAY_PUBLIC_INCLUDE_DIRS
   ${CMAKE_CURRENT_SOURCE_DIR}
@@ -74,13 +184,25 @@ file(GLOB ZLAY_UI_SOURCES CONFIGURE_DEPENDS
 )
 list(SORT ZLAY_UI_SOURCES)
 
+file(GLOB_RECURSE ZLAY_COMPONENT_HEADERS CONFIGURE_DEPENDS
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/zlay/components*.hpp
+  ${ZLAY_SOURCE_DIR}/components/*.hpp
+  ${ZLAY_SOURCE_DIR}/components/**/*.hpp
+)
+list(SORT ZLAY_COMPONENT_HEADERS)
+
+file(GLOB ZLAY_BACKEND_INTERFACE_HEADERS CONFIGURE_DEPENDS
+  ${ZLAY_SOURCE_DIR}/backends/*.h
+)
+list(SORT ZLAY_BACKEND_INTERFACE_HEADERS)
+
 file(GLOB_RECURSE ZLAY_BACKEND_CLAY_SOURCES CONFIGURE_DEPENDS
-  ${CMAKE_CURRENT_SOURCE_DIR}/backend/clay/*.c
+  ${ZLAY_SOURCE_DIR}/backends/layout/clay/*.c
 )
 list(SORT ZLAY_BACKEND_CLAY_SOURCES)
 
 file(GLOB_RECURSE ZLAY_BACKEND_CLAY_HEADERS CONFIGURE_DEPENDS
-  ${CMAKE_CURRENT_SOURCE_DIR}/backend/clay/*.h
+  ${ZLAY_SOURCE_DIR}/backends/layout/clay/*.h
 )
 list(SORT ZLAY_BACKEND_CLAY_HEADERS)
 
@@ -93,6 +215,36 @@ file(GLOB ZLAY_RENDERER_HEADERS CONFIGURE_DEPENDS
   ${ZLAY_SOURCE_DIR}/renderer/*.h
 )
 list(SORT ZLAY_RENDERER_HEADERS)
+
+file(GLOB_RECURSE ZLAY_CANVAS_SOURCES CONFIGURE_DEPENDS
+  ${ZLAY_SOURCE_DIR}/renderer/canvas/*.c
+)
+list(SORT ZLAY_CANVAS_SOURCES)
+
+file(GLOB_RECURSE ZLAY_CANVAS_HEADERS CONFIGURE_DEPENDS
+  ${ZLAY_SOURCE_DIR}/renderer/canvas/*.h
+)
+list(SORT ZLAY_CANVAS_HEADERS)
+
+file(GLOB ZLAY_RENDERER_OPENGL_BACKEND_SOURCES CONFIGURE_DEPENDS
+  ${ZLAY_SOURCE_DIR}/backends/renderer/opengl/*.c
+)
+list(SORT ZLAY_RENDERER_OPENGL_BACKEND_SOURCES)
+
+file(GLOB ZLAY_RENDERER_OPENGL_BACKEND_HEADERS CONFIGURE_DEPENDS
+  ${ZLAY_SOURCE_DIR}/backends/renderer/opengl/*.h
+)
+list(SORT ZLAY_RENDERER_OPENGL_BACKEND_HEADERS)
+
+file(GLOB ZLAY_RENDERER_VULKAN_BACKEND_SOURCES CONFIGURE_DEPENDS
+  ${ZLAY_SOURCE_DIR}/backends/renderer/vulkan/*.c
+)
+list(SORT ZLAY_RENDERER_VULKAN_BACKEND_SOURCES)
+
+file(GLOB ZLAY_RENDERER_VULKAN_BACKEND_HEADERS CONFIGURE_DEPENDS
+  ${ZLAY_SOURCE_DIR}/backends/renderer/vulkan/*.h
+)
+list(SORT ZLAY_RENDERER_VULKAN_BACKEND_HEADERS)
 
 file(GLOB ZLAY_LIFECYCLE_SOURCES CONFIGURE_DEPENDS
   ${ZLAY_SOURCE_DIR}/lifecycle/*.c
@@ -123,32 +275,32 @@ file(GLOB_RECURSE ZLAY_PARSER_HEADERS CONFIGURE_DEPENDS
 list(SORT ZLAY_PARSER_HEADERS)
 
 file(GLOB ZLAY_DRIVER_CORE_SOURCES CONFIGURE_DEPENDS
-  ${ZLAY_SOURCE_DIR}/driver/*.c
+  ${ZLAY_SOURCE_DIR}/drivers/gpu/*.c
 )
 list(SORT ZLAY_DRIVER_CORE_SOURCES)
 
 file(GLOB ZLAY_DRIVER_CORE_HEADERS CONFIGURE_DEPENDS
-  ${ZLAY_SOURCE_DIR}/driver/*.h
+  ${ZLAY_SOURCE_DIR}/drivers/gpu/*.h
 )
 list(SORT ZLAY_DRIVER_CORE_HEADERS)
 
 file(GLOB ZLAY_DRIVER_OPENGL_SOURCES CONFIGURE_DEPENDS
-  ${ZLAY_SOURCE_DIR}/driver/opengl/*.c
+  ${ZLAY_SOURCE_DIR}/drivers/gpu/opengl/*.c
 )
 list(SORT ZLAY_DRIVER_OPENGL_SOURCES)
 
 file(GLOB ZLAY_DRIVER_OPENGL_HEADERS CONFIGURE_DEPENDS
-  ${ZLAY_SOURCE_DIR}/driver/opengl/*.h
+  ${ZLAY_SOURCE_DIR}/drivers/gpu/opengl/*.h
 )
 list(SORT ZLAY_DRIVER_OPENGL_HEADERS)
 
 file(GLOB ZLAY_DRIVER_VULKAN_SOURCES CONFIGURE_DEPENDS
-  ${ZLAY_SOURCE_DIR}/driver/vulkan/*.c
+  ${ZLAY_SOURCE_DIR}/drivers/gpu/vulkan/*.c
 )
 list(SORT ZLAY_DRIVER_VULKAN_SOURCES)
 
 file(GLOB ZLAY_DRIVER_VULKAN_HEADERS CONFIGURE_DEPENDS
-  ${ZLAY_SOURCE_DIR}/driver/vulkan/*.h
+  ${ZLAY_SOURCE_DIR}/drivers/gpu/vulkan/*.h
 )
 list(SORT ZLAY_DRIVER_VULKAN_HEADERS)
 
@@ -177,33 +329,33 @@ list(APPEND ZLAY_OS_CORE_SOURCES ${ZLAY_OS_ROOT_SOURCES})
 list(SORT ZLAY_OS_HEADERS)
 list(SORT ZLAY_OS_CORE_SOURCES)
 
-file(GLOB ZLAY_OS_WIN32_SOURCES CONFIGURE_DEPENDS ${ZLAY_SOURCE_DIR}/os/win32/*.c)
+file(GLOB ZLAY_OS_WIN32_SOURCES CONFIGURE_DEPENDS ${ZLAY_PLATFORM_BACKEND_DIR}/win32/*.c)
 file(GLOB_RECURSE ZLAY_OS_WINRT_SOURCES CONFIGURE_DEPENDS
-  ${ZLAY_SOURCE_DIR}/os/winrt/*.c
-  ${ZLAY_SOURCE_DIR}/os/winrt/*.cpp
+  ${ZLAY_PLATFORM_BACKEND_DIR}/winrt/*.c
+  ${ZLAY_PLATFORM_BACKEND_DIR}/winrt/*.cpp
 )
 file(GLOB_RECURSE ZLAY_OS_COCOA_SOURCES CONFIGURE_DEPENDS
-  ${ZLAY_SOURCE_DIR}/os/cocoa/*.c
-  ${ZLAY_SOURCE_DIR}/os/cocoa/*.m
-  ${ZLAY_SOURCE_DIR}/os/cocoa/*.mm
+  ${ZLAY_PLATFORM_BACKEND_DIR}/cocoa/*.c
+  ${ZLAY_PLATFORM_BACKEND_DIR}/cocoa/*.m
+  ${ZLAY_PLATFORM_BACKEND_DIR}/cocoa/*.mm
 )
-file(GLOB ZLAY_OS_GTK_SOURCES CONFIGURE_DEPENDS ${ZLAY_SOURCE_DIR}/os/gtk/*.c)
+file(GLOB ZLAY_OS_GTK_SOURCES CONFIGURE_DEPENDS ${ZLAY_PLATFORM_BACKEND_DIR}/gtk/*.c)
 file(GLOB ZLAY_OS_X11_SOURCES CONFIGURE_DEPENDS
-  ${ZLAY_SOURCE_DIR}/os/x11/*.c
+  ${ZLAY_PLATFORM_BACKEND_DIR}/x11/*.c
 )
 
-file(GLOB ZLAY_OS_WIN32_HEADERS CONFIGURE_DEPENDS ${ZLAY_SOURCE_DIR}/os/win32/*.h)
+file(GLOB ZLAY_OS_WIN32_HEADERS CONFIGURE_DEPENDS ${ZLAY_PLATFORM_BACKEND_DIR}/win32/*.h)
 file(GLOB_RECURSE ZLAY_OS_WINRT_HEADERS CONFIGURE_DEPENDS
-  ${ZLAY_SOURCE_DIR}/os/winrt/*.h
-  ${ZLAY_SOURCE_DIR}/os/winrt/*.hpp
+  ${ZLAY_PLATFORM_BACKEND_DIR}/winrt/*.h
+  ${ZLAY_PLATFORM_BACKEND_DIR}/winrt/*.hpp
 )
 file(GLOB_RECURSE ZLAY_OS_COCOA_HEADERS CONFIGURE_DEPENDS
-  ${ZLAY_SOURCE_DIR}/os/cocoa/*.h
-  ${ZLAY_SOURCE_DIR}/os/cocoa/*.hpp
+  ${ZLAY_PLATFORM_BACKEND_DIR}/cocoa/*.h
+  ${ZLAY_PLATFORM_BACKEND_DIR}/cocoa/*.hpp
 )
-file(GLOB ZLAY_OS_GTK_HEADERS CONFIGURE_DEPENDS ${ZLAY_SOURCE_DIR}/os/gtk/*.h)
+file(GLOB ZLAY_OS_GTK_HEADERS CONFIGURE_DEPENDS ${ZLAY_PLATFORM_BACKEND_DIR}/gtk/*.h)
 file(GLOB ZLAY_OS_X11_HEADERS CONFIGURE_DEPENDS
-  ${ZLAY_SOURCE_DIR}/os/x11/*.h
+  ${ZLAY_PLATFORM_BACKEND_DIR}/x11/*.h
 )
 
 list(SORT ZLAY_OS_WIN32_SOURCES)
@@ -233,6 +385,26 @@ add_library(zlay::core ALIAS zlay_core)
 set_target_properties(zlay_core PROPERTIES EXPORT_NAME core)
 target_link_libraries(zlay_core INTERFACE zlay)
 
+if (ZLAY_ENABLE_COMPONENTS)
+  add_library(zlay_components INTERFACE)
+  add_library(zlay::components ALIAS zlay_components)
+  set_target_properties(zlay_components PROPERTIES EXPORT_NAME components)
+  target_link_libraries(zlay_components INTERFACE zlay)
+  target_compile_features(zlay_components INTERFACE cxx_std_${ZLAY_COMPONENTS_CPP_STANDARD})
+  target_compile_definitions(zlay_components
+    INTERFACE
+      ZLAY_ENABLE_COMPONENTS=1
+      $<$<BOOL:${ZLAY_ENABLE_COMPONENTS_META}>:ZLAY_ENABLE_COMPONENTS_META=1>
+      $<$<BOOL:${ZLAY_ENABLE_COMPONENTS_TOOLING}>:ZLAY_ENABLE_COMPONENTS_TOOLING=1>
+      $<$<BOOL:${ZLAY_ENABLE_COMPONENTS_VIEWPORT}>:ZLAY_ENABLE_COMPONENTS_VIEWPORT=1>
+      $<$<BOOL:${ZLAY_ENABLE_COMPONENTS_SCENE}>:ZLAY_ENABLE_COMPONENTS_SCENE=1>
+      $<$<BOOL:${ZLAY_ENABLE_COMPONENTS_INSPECTOR}>:ZLAY_ENABLE_COMPONENTS_INSPECTOR=1>
+      $<$<BOOL:${ZLAY_ENABLE_COMPONENTS_ASSETS}>:ZLAY_ENABLE_COMPONENTS_ASSETS=1>
+      $<$<BOOL:${ZLAY_ENABLE_COMPONENTS_GRAPH}>:ZLAY_ENABLE_COMPONENTS_GRAPH=1>
+      $<$<BOOL:${ZLAY_ENABLE_COMPONENTS_TIMELINE}>:ZLAY_ENABLE_COMPONENTS_TIMELINE=1>
+  )
+endif()
+
 target_compile_features(zlay PUBLIC c_std_11)
 set_target_properties(zlay PROPERTIES
   C_STANDARD 11
@@ -248,6 +420,16 @@ target_compile_definitions(zlay
     ZLAY_BUILDING
   PUBLIC
     $<$<BOOL:${BUILD_SHARED_LIBS}>:ZLAY_SHARED>
+    $<$<BOOL:${ZLAY_EFFECTIVE_BACKEND_CLAY}>:ZLAY_ENABLE_BACKEND_CLAY=1>
+    $<$<BOOL:${ZLAY_EFFECTIVE_CANVAS}>:ZLAY_ENABLE_CANVAS=1>
+    $<$<AND:$<BOOL:${ZLAY_EFFECTIVE_CANVAS}>,$<BOOL:${ZLAY_ENABLE_CANVAS_PATH}>>:ZLAY_ENABLE_CANVAS_PATH=1>
+    $<$<AND:$<BOOL:${ZLAY_EFFECTIVE_CANVAS}>,$<BOOL:${ZLAY_ENABLE_CANVAS_TEXT}>>:ZLAY_ENABLE_CANVAS_TEXT=1>
+    $<$<AND:$<BOOL:${ZLAY_EFFECTIVE_CANVAS}>,$<BOOL:${ZLAY_ENABLE_CANVAS_IMAGE}>>:ZLAY_ENABLE_CANVAS_IMAGE=1>
+    $<$<AND:$<BOOL:${ZLAY_EFFECTIVE_CANVAS}>,$<BOOL:${ZLAY_ENABLE_CANVAS_GRADIENT}>>:ZLAY_ENABLE_CANVAS_GRADIENT=1>
+    $<$<BOOL:${ZLAY_EFFECTIVE_RENDERER_OPENGL}>:ZLAY_ENABLE_RENDERER_OPENGL=1>
+    $<$<BOOL:${ZLAY_EFFECTIVE_RENDERER_VULKAN}>:ZLAY_ENABLE_RENDERER_VULKAN=1>
+    $<$<BOOL:${ZLAY_EFFECTIVE_DRIVER_OPENGL}>:ZLAY_ENABLE_DRIVER_OPENGL=1>
+    $<$<BOOL:${ZLAY_EFFECTIVE_DRIVER_VULKAN}>:ZLAY_ENABLE_DRIVER_VULKAN=1>
 )
 
 add_custom_target(zlay_generate_header
@@ -280,19 +462,29 @@ target_sources(zlay
     ${ZLAY_CORE_MODULE_HEADERS}
     ${ZLAY_UI_SOURCES}
     ${ZLAY_UI_HEADERS}
+    ${ZLAY_BACKEND_INTERFACE_HEADERS}
 )
 
-if (ZLAY_USE_CLAY_BACKEND)
+if (ZLAY_ENABLE_COMPONENTS)
+  target_sources(zlay PRIVATE ${ZLAY_COMPONENT_HEADERS})
+endif()
+
+if (ZLAY_EFFECTIVE_BACKEND_CLAY)
   message(STATUS "Zlay: Clay backend enabled")
   if (ZLAY_VENDOR_CLAY)
     message(STATUS "Zlay: Using vendored Clay")
   endif()
   target_sources(zlay PRIVATE ${ZLAY_BACKEND_CLAY_SOURCES} ${ZLAY_BACKEND_CLAY_HEADERS})
 
+  add_library(zlay_backend_clay INTERFACE)
+  add_library(zlay::backend_clay ALIAS zlay_backend_clay)
+  set_target_properties(zlay_backend_clay PROPERTIES EXPORT_NAME backend_clay)
+  target_link_libraries(zlay_backend_clay INTERFACE zlay)
+
   add_library(z_clay INTERFACE)
   add_library(zlay::clay ALIAS z_clay)
   set_target_properties(z_clay PROPERTIES EXPORT_NAME clay)
-  target_link_libraries(z_clay INTERFACE zlay)
+  target_link_libraries(z_clay INTERFACE zlay_backend_clay)
 endif()
 
 target_include_directories(zlay
@@ -330,6 +522,33 @@ if (ZLAY_BUILD_RENDERER)
   add_library(zlay::renderer ALIAS zlay_renderer)
   set_target_properties(zlay_renderer PROPERTIES EXPORT_NAME renderer)
   target_link_libraries(zlay_renderer INTERFACE zlay)
+
+  if (ZLAY_EFFECTIVE_CANVAS)
+    target_sources(zlay PRIVATE ${ZLAY_CANVAS_SOURCES} ${ZLAY_CANVAS_HEADERS})
+
+    add_library(zlay_renderer_canvas INTERFACE)
+    add_library(zlay::renderer_canvas ALIAS zlay_renderer_canvas)
+    set_target_properties(zlay_renderer_canvas PROPERTIES EXPORT_NAME renderer_canvas)
+    target_link_libraries(zlay_renderer_canvas INTERFACE zlay_renderer)
+  endif()
+
+  if (ZLAY_EFFECTIVE_RENDERER_OPENGL)
+    target_sources(zlay PRIVATE ${ZLAY_RENDERER_OPENGL_BACKEND_SOURCES} ${ZLAY_RENDERER_OPENGL_BACKEND_HEADERS})
+
+    add_library(zlay_renderer_backend_opengl INTERFACE)
+    add_library(zlay::renderer_backend_opengl ALIAS zlay_renderer_backend_opengl)
+    set_target_properties(zlay_renderer_backend_opengl PROPERTIES EXPORT_NAME renderer_backend_opengl)
+    target_link_libraries(zlay_renderer_backend_opengl INTERFACE zlay_renderer)
+  endif()
+
+  if (ZLAY_EFFECTIVE_RENDERER_VULKAN)
+    target_sources(zlay PRIVATE ${ZLAY_RENDERER_VULKAN_BACKEND_SOURCES} ${ZLAY_RENDERER_VULKAN_BACKEND_HEADERS})
+
+    add_library(zlay_renderer_backend_vulkan INTERFACE)
+    add_library(zlay::renderer_backend_vulkan ALIAS zlay_renderer_backend_vulkan)
+    set_target_properties(zlay_renderer_backend_vulkan PROPERTIES EXPORT_NAME renderer_backend_vulkan)
+    target_link_libraries(zlay_renderer_backend_vulkan INTERFACE zlay_renderer)
+  endif()
 endif()
 
 if (ZLAY_BUILD_PARSER)
@@ -391,23 +610,29 @@ endif()
 
 if (ZLAY_BUILD_DRIVERS)
   target_sources(zlay PRIVATE ${ZLAY_DRIVER_CORE_SOURCES} ${ZLAY_DRIVER_CORE_HEADERS})
-  target_sources(zlay PRIVATE ${ZLAY_DRIVER_OPENGL_SOURCES} ${ZLAY_DRIVER_OPENGL_HEADERS})
-  target_sources(zlay PRIVATE ${ZLAY_DRIVER_VULKAN_SOURCES} ${ZLAY_DRIVER_VULKAN_HEADERS})
 
   add_library(zlay_driver INTERFACE)
   add_library(zlay::driver ALIAS zlay_driver)
   set_target_properties(zlay_driver PROPERTIES EXPORT_NAME driver)
   target_link_libraries(zlay_driver INTERFACE zlay)
 
-  add_library(zlay_driver_opengl INTERFACE)
-  add_library(zlay::driver_opengl ALIAS zlay_driver_opengl)
-  set_target_properties(zlay_driver_opengl PROPERTIES EXPORT_NAME driver_opengl)
-  target_link_libraries(zlay_driver_opengl INTERFACE zlay_driver)
+  if (ZLAY_EFFECTIVE_DRIVER_OPENGL)
+    target_sources(zlay PRIVATE ${ZLAY_DRIVER_OPENGL_SOURCES} ${ZLAY_DRIVER_OPENGL_HEADERS})
 
-  add_library(zlay_driver_vulkan INTERFACE)
-  add_library(zlay::driver_vulkan ALIAS zlay_driver_vulkan)
-  set_target_properties(zlay_driver_vulkan PROPERTIES EXPORT_NAME driver_vulkan)
-  target_link_libraries(zlay_driver_vulkan INTERFACE zlay_driver)
+    add_library(zlay_driver_opengl INTERFACE)
+    add_library(zlay::driver_opengl ALIAS zlay_driver_opengl)
+    set_target_properties(zlay_driver_opengl PROPERTIES EXPORT_NAME driver_opengl)
+    target_link_libraries(zlay_driver_opengl INTERFACE zlay_driver)
+  endif()
+
+  if (ZLAY_EFFECTIVE_DRIVER_VULKAN)
+    target_sources(zlay PRIVATE ${ZLAY_DRIVER_VULKAN_SOURCES} ${ZLAY_DRIVER_VULKAN_HEADERS})
+
+    add_library(zlay_driver_vulkan INTERFACE)
+    add_library(zlay::driver_vulkan ALIAS zlay_driver_vulkan)
+    set_target_properties(zlay_driver_vulkan PROPERTIES EXPORT_NAME driver_vulkan)
+    target_link_libraries(zlay_driver_vulkan INTERFACE zlay_driver)
+  endif()
 endif()
 
 if (ZLAY_BUILD_OS)
@@ -426,6 +651,9 @@ if (ZLAY_BUILD_OS)
   endif()
 
   if (ZLAY_EFFECTIVE_OS_BACKEND STREQUAL "win32")
+    if (NOT ZLAY_ENABLE_PLATFORM_WIN32)
+      message(FATAL_ERROR "ZLAY_OS_BACKEND=win32 requires ZLAY_ENABLE_PLATFORM_WIN32")
+    endif()
     target_compile_definitions(zlay PRIVATE ZLAY_OS_BACKEND_SELECTED_WIN32=1)
     target_sources(zlay PRIVATE ${ZLAY_OS_HEADERS} ${ZLAY_OS_CORE_SOURCES} ${ZLAY_OS_WIN32_SOURCES} ${ZLAY_OS_WIN32_HEADERS})
     if (WIN32 AND ZLAY_ENABLE_WINRT_SUPPORT)
@@ -438,6 +666,9 @@ if (ZLAY_BUILD_OS)
   elseif(ZLAY_EFFECTIVE_OS_BACKEND STREQUAL "cocoa")
     if(NOT APPLE)
       message(FATAL_ERROR "ZLAY_OS_BACKEND=cocoa requires an Apple target")
+    endif()
+    if (NOT ZLAY_ENABLE_PLATFORM_COCOA)
+      message(FATAL_ERROR "ZLAY_OS_BACKEND=cocoa requires ZLAY_ENABLE_PLATFORM_COCOA")
     endif()
     enable_language(OBJCXX)
     target_compile_definitions(zlay PRIVATE ZLAY_OS_BACKEND_SELECTED_COCOA=1)
@@ -458,6 +689,9 @@ if (ZLAY_BUILD_OS)
       target_link_libraries(zlay PRIVATE rt)
     endif()
   elseif(ZLAY_EFFECTIVE_OS_BACKEND STREQUAL "x11")
+    if (NOT ZLAY_ENABLE_PLATFORM_X11)
+      message(FATAL_ERROR "ZLAY_OS_BACKEND=x11 requires ZLAY_ENABLE_PLATFORM_X11")
+    endif()
     find_package(X11 REQUIRED)
     target_compile_definitions(zlay PRIVATE ZLAY_OS_BACKEND_SELECTED_X11=1)
     target_sources(zlay PRIVATE ${ZLAY_OS_HEADERS} ${ZLAY_OS_CORE_SOURCES} ${ZLAY_OS_X11_SOURCES} ${ZLAY_OS_X11_HEADERS})
@@ -493,6 +727,13 @@ if (ZLAY_BUILD_EXAMPLES)
   target_compile_features(zlay_example_wrapper_cpp PRIVATE cxx_std_20)
   target_include_directories(zlay_example_wrapper_cpp PRIVATE ${ZLAY_PUBLIC_INCLUDE_DIRS})
   target_link_libraries(zlay_example_wrapper_cpp PRIVATE zlay)
+
+  if (ZLAY_ENABLE_COMPONENTS)
+    add_executable(zlay_example_components example/components/main.cpp)
+    target_compile_features(zlay_example_components PRIVATE cxx_std_${ZLAY_COMPONENTS_CPP_STANDARD})
+    target_include_directories(zlay_example_components PRIVATE ${ZLAY_PUBLIC_INCLUDE_DIRS})
+    target_link_libraries(zlay_example_components PRIVATE zlay_components)
+  endif()
 
   find_package(X11 QUIET)
   if (X11_FOUND)
@@ -543,6 +784,13 @@ if (ZLAY_BUILD_EXAMPLES)
     target_link_libraries(zlay_example_basic_c PRIVATE zlay_renderer)
     target_link_libraries(zlay_example_wrapper PRIVATE zlay_renderer)
     target_link_libraries(zlay_example_wrapper_cpp PRIVATE zlay_renderer)
+  endif()
+
+  if (TARGET zlay_renderer_backend_opengl)
+    target_link_libraries(zlay_example_basic PRIVATE zlay_renderer_backend_opengl)
+    target_link_libraries(zlay_example_basic_c PRIVATE zlay_renderer_backend_opengl)
+    target_link_libraries(zlay_example_wrapper PRIVATE zlay_renderer_backend_opengl)
+    target_link_libraries(zlay_example_wrapper_cpp PRIVATE zlay_renderer_backend_opengl)
   endif()
 
   if (TARGET zlay_shaders)

@@ -7,6 +7,8 @@ void ZLay_WindowSetCursor(ZLay_Window* window, ZLay_Cursor cursor) {
   ZLay_Win32_WindowSetCursor(window, cursor);
 #elif defined(ZLAY_OS_BACKEND_SELECTED_COCOA)
   ZLay_Cocoa_WindowSetCursor(window, cursor);
+#elif defined(ZLAY_OS_BACKEND_SELECTED_GTK)
+  ZLay_GTK_WindowSetCursor(window, cursor);
 #elif defined(ZLAY_OS_BACKEND_SELECTED_X11)
   ZLay_X11_WindowSetCursor(window, cursor);
 #else

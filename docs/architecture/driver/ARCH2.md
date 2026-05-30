@@ -19,7 +19,7 @@ present
 Core ZLay lu sudah output ZLay_RenderCommandList, jadi driver cukup menerima command list itu dan translate ke OpenGL/Vulkan.
 
 Struktur Folder Driver
-src/driver/
+zlay/drivers/gpu/
 ├── zlay_driver.h
 ├── zlay_driver.c
 ├── zlay_backend.h

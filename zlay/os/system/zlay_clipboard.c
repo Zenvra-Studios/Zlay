@@ -7,6 +7,8 @@ bool ZLay_ClipboardSetText(const char* text) {
   return ZLay_Win32_ClipboardSetText(text);
 #elif defined(ZLAY_OS_BACKEND_SELECTED_COCOA)
   return ZLay_Cocoa_ClipboardSetText(text);
+#elif defined(ZLAY_OS_BACKEND_SELECTED_GTK)
+  return ZLay_GTK_ClipboardSetText(text);
 #elif defined(ZLAY_OS_BACKEND_SELECTED_X11)
   return ZLay_X11_ClipboardSetText(text);
 #else
@@ -20,6 +22,8 @@ const char* ZLay_ClipboardGetText(void) {
   return ZLay_Win32_ClipboardGetText();
 #elif defined(ZLAY_OS_BACKEND_SELECTED_COCOA)
   return ZLay_Cocoa_ClipboardGetText();
+#elif defined(ZLAY_OS_BACKEND_SELECTED_GTK)
+  return ZLay_GTK_ClipboardGetText();
 #elif defined(ZLAY_OS_BACKEND_SELECTED_X11)
   return ZLay_X11_ClipboardGetText();
 #else

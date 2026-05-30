@@ -4,7 +4,7 @@
 #include <string>
 #include <thread>
 
-#include <driver/opengl/zlay_opengl.h>
+#include <backends/renderer/opengl/zlay_opengl_renderer_backend.h>
 #include <os/zlay_os.h>
 #include <renderer/zlay_renderer.h>
 #include "../platform/Window.h"

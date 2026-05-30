@@ -72,9 +72,12 @@ zlay/
   layout/      (flex + absolute + measure hooks)
   render/      (render commands + clip + sorting)
   input/       (mouse/keyboard state, hit-test)
-  backend/
-    opengl/    (OpenGL renderer)
-    vulkan/    (Vulkan renderer)
+  backends/
+    renderer/opengl/    (OpenGL renderer backend)
+    renderer/vulkan/    (Vulkan renderer backend)
+  drivers/
+    gpu/opengl/         (OpenGL GPU driver)
+    gpu/vulkan/         (Vulkan GPU driver)
   widgets/     (optional; sugar di atas core)
 ```
 
@@ -246,7 +249,8 @@ zlay/
   zlay_style.c
   zlay_render.c
   renderer/
-  driver/
+  backends/
+  drivers/gpu/
   os/
 include/
   helper tutorial/example

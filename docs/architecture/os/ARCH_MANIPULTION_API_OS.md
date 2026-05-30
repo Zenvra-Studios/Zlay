@@ -56,7 +56,7 @@ os/
   poll native events
   provide native handles
 
-driver/
+drivers/gpu/
   create OpenGL/Vulkan context
   create swapchain/surface
 
@@ -1073,9 +1073,9 @@ Implement after X11 and Win32 are stable.
 ## Stable Public API
 
 ```txt
-include/zlay/zlay_os.h
-include/zlay/zlay_window.h
-include/zlay/zlay_event.h
+zlay/os/zlay_os.h
+zlay/os/window/zlay_window.h
+zlay/os/event/zlay_event.h
 ```
 
 ---
@@ -1186,7 +1186,7 @@ Emscripten
 
 ```txt
 os/       = platform abstraction
-driver/   = GPU abstraction
+drivers/gpu/ = GPU abstraction
 renderer/ = command batching
 layout/   = size & position
 style/    = visual properties

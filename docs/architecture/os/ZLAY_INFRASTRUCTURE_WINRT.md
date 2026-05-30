@@ -539,10 +539,10 @@ cross-platform breakage
 Correct:
 
 ```txt
-include/zlay/
-  pure C API only
+zlay/
+  pure C API and backend interface headers only
 
-src/os/winrt/
+zlay/backends/platform/winrt/
   internal WinRT includes
 ```
 
@@ -797,7 +797,7 @@ win32/
 winrt/
   modern Windows enhancement
 
-driver/
+drivers/gpu/
   OpenGL/Vulkan abstraction
 
 renderer/

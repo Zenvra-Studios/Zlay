@@ -5,7 +5,8 @@ Shader layer menyimpan source shader bawaan untuk renderer backend. Source shade
 ```text
 ZLay_RenderCommandList
   -> renderer/zlay_renderer.h
-  -> driver/opengl atau driver/vulkan
+  -> backends/renderer/opengl atau backends/renderer/vulkan
+  -> drivers/gpu/opengl atau drivers/gpu/vulkan
   -> zlay_antialiasing.h
 ```
 

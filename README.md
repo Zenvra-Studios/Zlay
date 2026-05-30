@@ -28,12 +28,14 @@ python3 scripts/zlay.py clean --backend gtk
 
 - C API core: `#include "zlay.h"`
 - Example/tutorial helper: `#include "zlay_example.h"`
-- Renderer backends: `#include "driver/opengl/zlay_opengl.h"` atau `#include "driver/vulkan/zlay_vulkan.h"`
+- Backend interfaces: `#include "backends/zlay_backends.h"`
+- Renderer backends: `#include "backends/renderer/opengl/zlay_opengl_renderer_backend.h"` atau `#include "backends/renderer/vulkan/zlay_vulkan_renderer_backend.h"`
 - Platform backends: `#include "os/zlay_os.h"`
 
 ## Source Layout
 
 - `zlay.h`: public single entry untuk core C API.
-- `zlay/`: implementasi core, components, renderer, driver, shader API, dan OS backend.
+- `zlay/`: implementasi core, components, renderer, backends, drivers, shader API, dan OS facade.
+- `third_party/`: dependensi vendor yang diisolasi dari core ZLay.
 - `shader/`: source shader asli per bahasa yang di-embed saat build.
 - `include/`: helper untuk example/tutorial, bukan tempat implementasi core.

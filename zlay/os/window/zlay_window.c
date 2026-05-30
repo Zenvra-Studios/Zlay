@@ -7,6 +7,8 @@ ZLay_Window* ZLay_WindowAttachNative(const ZLay_WindowAttachDesc* desc) {
   return ZLay_Win32_WindowAttachNative(desc);
 #elif defined(ZLAY_OS_BACKEND_SELECTED_COCOA)
   return ZLay_Cocoa_WindowAttachNative(desc);
+#elif defined(ZLAY_OS_BACKEND_SELECTED_GTK)
+  return ZLay_GTK_WindowAttachNative(desc);
 #elif defined(ZLAY_OS_BACKEND_SELECTED_X11)
   return ZLay_X11_WindowAttachNative(desc);
 #else
@@ -20,6 +22,8 @@ void ZLay_WindowDetach(ZLay_Window* window) {
   ZLay_Win32_WindowDetach(window);
 #elif defined(ZLAY_OS_BACKEND_SELECTED_COCOA)
   ZLay_Cocoa_WindowDetach(window);
+#elif defined(ZLAY_OS_BACKEND_SELECTED_GTK)
+  ZLay_GTK_WindowDetach(window);
 #elif defined(ZLAY_OS_BACKEND_SELECTED_X11)
   ZLay_X11_WindowDetach(window);
 #else
@@ -41,6 +45,8 @@ void ZLay_WindowShow(ZLay_Window* window) {
   ZLay_Win32_WindowShow(window);
 #elif defined(ZLAY_OS_BACKEND_SELECTED_COCOA)
   ZLay_Cocoa_WindowShow(window);
+#elif defined(ZLAY_OS_BACKEND_SELECTED_GTK)
+  ZLay_GTK_WindowShow(window);
 #elif defined(ZLAY_OS_BACKEND_SELECTED_X11)
   ZLay_X11_WindowShow(window);
 #else
@@ -53,6 +59,8 @@ void ZLay_WindowHide(ZLay_Window* window) {
   ZLay_Win32_WindowHide(window);
 #elif defined(ZLAY_OS_BACKEND_SELECTED_COCOA)
   ZLay_Cocoa_WindowHide(window);
+#elif defined(ZLAY_OS_BACKEND_SELECTED_GTK)
+  ZLay_GTK_WindowHide(window);
 #elif defined(ZLAY_OS_BACKEND_SELECTED_X11)
   ZLay_X11_WindowHide(window);
 #else
@@ -65,6 +73,8 @@ void ZLay_WindowSetTitle(ZLay_Window* window, const char* title) {
   ZLay_Win32_WindowSetTitle(window, title);
 #elif defined(ZLAY_OS_BACKEND_SELECTED_COCOA)
   ZLay_Cocoa_WindowSetTitle(window, title);
+#elif defined(ZLAY_OS_BACKEND_SELECTED_GTK)
+  ZLay_GTK_WindowSetTitle(window, title);
 #elif defined(ZLAY_OS_BACKEND_SELECTED_X11)
   ZLay_X11_WindowSetTitle(window, title);
 #else
@@ -78,6 +88,8 @@ bool ZLay_WindowShouldClose(ZLay_Window* window) {
   return ZLay_Win32_WindowShouldClose(window);
 #elif defined(ZLAY_OS_BACKEND_SELECTED_COCOA)
   return ZLay_Cocoa_WindowShouldClose(window);
+#elif defined(ZLAY_OS_BACKEND_SELECTED_GTK)
+  return ZLay_GTK_WindowShouldClose(window);
 #elif defined(ZLAY_OS_BACKEND_SELECTED_X11)
   return ZLay_X11_WindowShouldClose(window);
 #else
@@ -91,6 +103,8 @@ void ZLay_WindowRequestClose(ZLay_Window* window) {
   ZLay_Win32_WindowRequestClose(window);
 #elif defined(ZLAY_OS_BACKEND_SELECTED_COCOA)
   ZLay_Cocoa_WindowRequestClose(window);
+#elif defined(ZLAY_OS_BACKEND_SELECTED_GTK)
+  ZLay_GTK_WindowRequestClose(window);
 #elif defined(ZLAY_OS_BACKEND_SELECTED_X11)
   ZLay_X11_WindowRequestClose(window);
 #else
@@ -103,6 +117,8 @@ void ZLay_WindowGetSize(ZLay_Window* window, uint32_t* width, uint32_t* height) 
   ZLay_Win32_WindowGetSize(window, width, height);
 #elif defined(ZLAY_OS_BACKEND_SELECTED_COCOA)
   ZLay_Cocoa_WindowGetSize(window, width, height);
+#elif defined(ZLAY_OS_BACKEND_SELECTED_GTK)
+  ZLay_GTK_WindowGetSize(window, width, height);
 #elif defined(ZLAY_OS_BACKEND_SELECTED_X11)
   ZLay_X11_WindowGetSize(window, width, height);
 #else
@@ -117,6 +133,8 @@ void ZLay_WindowGetFramebufferSize(ZLay_Window* window, uint32_t* width, uint32_
   ZLay_Win32_WindowGetFramebufferSize(window, width, height);
 #elif defined(ZLAY_OS_BACKEND_SELECTED_COCOA)
   ZLay_Cocoa_WindowGetFramebufferSize(window, width, height);
+#elif defined(ZLAY_OS_BACKEND_SELECTED_GTK)
+  ZLay_GTK_WindowGetFramebufferSize(window, width, height);
 #elif defined(ZLAY_OS_BACKEND_SELECTED_X11)
   ZLay_X11_WindowGetFramebufferSize(window, width, height);
 #else
@@ -131,6 +149,8 @@ float ZLay_WindowGetScale(ZLay_Window* window) {
   return ZLay_Win32_WindowGetScale(window);
 #elif defined(ZLAY_OS_BACKEND_SELECTED_COCOA)
   return ZLay_Cocoa_WindowGetScale(window);
+#elif defined(ZLAY_OS_BACKEND_SELECTED_GTK)
+  return ZLay_GTK_WindowGetScale(window);
 #elif defined(ZLAY_OS_BACKEND_SELECTED_X11)
   return ZLay_X11_WindowGetScale(window);
 #else
@@ -144,6 +164,8 @@ ZLay_NativeWindowHandle ZLay_WindowGetNativeHandle(ZLay_Window* window) {
   return ZLay_Win32_WindowGetNativeHandle(window);
 #elif defined(ZLAY_OS_BACKEND_SELECTED_COCOA)
   return ZLay_Cocoa_WindowGetNativeHandle(window);
+#elif defined(ZLAY_OS_BACKEND_SELECTED_GTK)
+  return ZLay_GTK_WindowGetNativeHandle(window);
 #elif defined(ZLAY_OS_BACKEND_SELECTED_X11)
   return ZLay_X11_WindowGetNativeHandle(window);
 #else

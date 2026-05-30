@@ -5,7 +5,7 @@
 #  define ZLAY_LOG_ACTIVE_LEVEL 1 // ZLAY_LOG_LEVEL_DEBUG before zlay_logger.h defines it.
 #endif
 
-#include <driver/opengl/zlay_opengl.h>
+#include <backends/renderer/opengl/zlay_opengl_renderer_backend.h>
 #include <renderer/zlay_renderer.h>
 #include <os/zlay_os.h>
 #include <zlay.h>

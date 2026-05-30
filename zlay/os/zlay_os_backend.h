@@ -54,6 +54,10 @@ bool ZLay_Cocoa_ClipboardSetText(const char* text);
 const char* ZLay_Cocoa_ClipboardGetText(void);
 #endif
 
+#if defined(ZLAY_OS_BACKEND_SELECTED_GTK)
+#include <backends/platform/gtk/zlay_gtk_backend.h>
+#endif
+
 #if defined(ZLAY_OS_BACKEND_SELECTED_X11)
 ZLay_Window* ZLay_X11_WindowAttachNative(const ZLay_WindowAttachDesc* desc);
 void ZLay_X11_WindowDetach(ZLay_Window* window);

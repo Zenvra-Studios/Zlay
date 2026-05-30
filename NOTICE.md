@@ -17,14 +17,15 @@ header explicitly documents otherwise.
 - Repository: https://github.com/nicbarker/clay
 - Version in tree: 0.14
 - License: zlib/libpng
-- Location: `lib/clay.h`
-- Preserved license text: `lib/CLAY_LICENSE.md` and the license footer in
-  `lib/clay.h`
-- Usage: optional internal layout backend through `backend/clay/z_clay_backend.c`
-  and `backend/clay/z_clay_backend.h`
+- Location: `third_party/clay/clay.h`
+- Preserved license text: `third_party/clay/LICENSE.md` and the license footer in
+  `third_party/clay/clay.h`
+- Usage: optional internal layout backend through
+  `zlay/backends/layout/clay/zlay_clay_layout_backend.c` and
+  `zlay/backends/layout/clay/zlay_clay_layout_backend.h`
 
 Clay is not authored by Zenvra Studio or ZLay contributors. If the vendored
-`lib/clay.h` file is modified, the modified version must be plainly marked as
+`third_party/clay/clay.h` file is modified, the modified version must be plainly marked as
 modified and must keep the original Clay notice.
 
 ### stb_image
@@ -34,10 +35,10 @@ modified and must keep the original Clay notice.
 - Repository: https://github.com/nothings/stb
 - Version in tree: 2.30
 - License: dual licensed, MIT License or Public Domain/Unlicense
-- Location: `lib/stb_image.h`
+- Location: `third_party/stb/stb_image.h`
 - Usage: image loading support for renderer/tooling code.
 
-The original license notice is preserved at the end of `lib/stb_image.h`.
+The original license notice is preserved at the end of `third_party/stb/stb_image.h`.
 
 ### stb_truetype
 
@@ -46,10 +47,10 @@ The original license notice is preserved at the end of `lib/stb_image.h`.
 - Repository: https://github.com/nothings/stb
 - Version in tree: 1.26
 - License: dual licensed, MIT License or Public Domain/Unlicense
-- Location: `lib/stb_truetype.h`
+- Location: `third_party/stb/stb_truetype.h`
 - Usage: TrueType font parsing, glyph metrics, and glyph rasterization support.
 
-The original license notice is preserved in `lib/stb_truetype.h`.
+The original license notice is preserved in `third_party/stb/stb_truetype.h`.
 
 ### json.h
 
@@ -57,10 +58,10 @@ The original license notice is preserved in `lib/stb_truetype.h`.
 - Author/maintainer: Sheredom
 - Repository: https://github.com/sheredom/json.h
 - License: Public Domain/Unlicense
-- Location: `lib/json.h`
+- Location: `third_party/json/json.h`
 - Usage: JSON parsing and writing support.
 
-The original public domain notice is preserved at the top of `lib/json.h`.
+The original public domain notice is preserved at the top of `third_party/json/json.h`.
 
 ### xxHash
 
@@ -68,10 +69,10 @@ The original public domain notice is preserved at the top of `lib/json.h`.
 - Author: Yann Collet
 - Repository: https://github.com/Cyan4973/xxHash
 - License: BSD 2-Clause
-- Location: `lib/xxhash.h`
+- Location: `third_party/xxhash/xxhash.h`
 - Usage: fast non-cryptographic hashing support.
 
-The original BSD 2-Clause notice is preserved at the top of `lib/xxhash.h`.
+The original BSD 2-Clause notice is preserved at the top of `third_party/xxhash/xxhash.h`.
 
 ## External Dependencies and Platform APIs
 
@@ -98,7 +99,7 @@ system packages, SDKs, or vendors.
 ## Project Packaging Metadata
 
 - `cmake/vcpkg/zlay/copyright` contains ZLay package copyright metadata.
-- `lib/CLAY_LICENSE.md` preserves the Clay license as a standalone notice file.
+- `third_party/clay/LICENSE.md` preserves the Clay license as a standalone notice file.
 
 ## Modification Policy
 

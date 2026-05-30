@@ -20,18 +20,20 @@
 
 #include <lifecycle/zlay_lifecycle.h>
 
-#include <driver/opengl/zlay_opengl.h>
-#include <driver/vulkan/zlay_vulkan.h>
-#include <driver/zlay_backend.h>
-#include <driver/zlay_batch.h>
-#include <driver/zlay_context.h>
-#include <driver/zlay_driver.h>
-#include <driver/zlay_frame.h>
-#include <driver/zlay_gpu.h>
-#include <driver/zlay_pipeline.h>
-#include <driver/zlay_present.h>
-#include <driver/zlay_surface.h>
-#include <driver/zlay_swapchain.h>
+#include <backends/zlay_backends.h>
+
+#include <drivers/gpu/opengl/zlay_opengl.h>
+#include <drivers/gpu/vulkan/zlay_vulkan.h>
+#include <drivers/gpu/zlay_backend.h>
+#include <drivers/gpu/zlay_batch.h>
+#include <drivers/gpu/zlay_context.h>
+#include <drivers/gpu/zlay_driver.h>
+#include <drivers/gpu/zlay_frame.h>
+#include <drivers/gpu/zlay_gpu.h>
+#include <drivers/gpu/zlay_pipeline.h>
+#include <drivers/gpu/zlay_present.h>
+#include <drivers/gpu/zlay_surface.h>
+#include <drivers/gpu/zlay_swapchain.h>
 
 #include <os/zlay_os.h>
 
@@ -45,7 +47,6 @@
 #include <event/zlay_animate.h>
 #include <event/zlay_messagebox.h>
 #include <event/zlay_network.h>
-#include <event/zlay_gpu_driver.h>
 #include <event/zlay_effect.h>
 
 #ifdef __cplusplus

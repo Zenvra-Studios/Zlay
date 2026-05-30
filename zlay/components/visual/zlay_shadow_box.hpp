@@ -1,0 +1,6 @@
+#ifndef ZLAY_COMPONENTS_VISUAL_ZLAY_SHADOW_BOX_HPP
+#define ZLAY_COMPONENTS_VISUAL_ZLAY_SHADOW_BOX_HPP
+
+#include <zlay/components/visual/zlay_box.hpp>
+
+#endif // ZLAY_COMPONENTS_VISUAL_ZLAY_SHADOW_BOX_HPP

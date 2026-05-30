@@ -500,6 +500,10 @@ typedef struct ZLay_RenderCommandList {
   uint32_t count;
 } ZLay_RenderCommandList;
 
+typedef struct ZLay_ImageHandle {
+  uint64_t id;
+} ZLay_ImageHandle;
+
 typedef struct ZLay_Context ZLay_Context;
 
 // -----------------------------
@@ -510,7 +514,9 @@ typedef enum ZLay_RenderCommandType {
   ZLAY_CMD_RECT = 0,
   ZLAY_CMD_TEXT = 1,
   ZLAY_CMD_CLIP_BEGIN = 2,
-  ZLAY_CMD_CLIP_END = 3
+  ZLAY_CMD_CLIP_END = 3,
+  ZLAY_CMD_LINE = 4,
+  ZLAY_CMD_IMAGE = 5
 } ZLay_RenderCommandType;
 
 struct ZLay_RenderCommand {
@@ -528,6 +534,11 @@ struct ZLay_RenderCommand {
   ZLay_String font_family;
   float font_size;
   ZLay_PointerCursor pointer_cursor;
+  ZLay_Vec2 line_start;
+  ZLay_Vec2 line_end;
+  float stroke_width;
+  ZLay_ImageHandle image;
+  ZLay_Rect source_rect;
 };
 
 // Declarative macro API (Clay-like)

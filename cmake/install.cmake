@@ -7,8 +7,13 @@ set(ZLAY_INSTALL_CMAKE_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/ZLay" CACHE STRING "In
 set(ZLAY_INSTALL_TARGETS zlay)
 foreach(_ZLAY_TARGET IN ITEMS
   zlay_core
+  zlay_components
+  zlay_backend_clay
   zlay_lifecycle
   zlay_renderer
+  zlay_renderer_canvas
+  zlay_renderer_backend_opengl
+  zlay_renderer_backend_vulkan
   zlay_parser
   zlay_shaders
   zlay_driver
@@ -53,6 +58,7 @@ install(
   DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/zlay"
   FILES_MATCHING
     PATTERN "*.h"
+    PATTERN "*.hpp"
     PATTERN "zlay_internal.h" EXCLUDE
 )
 
@@ -63,15 +69,6 @@ if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/include")
     FILES_MATCHING
       PATTERN "*.h"
       PATTERN "*.hpp"
-  )
-endif()
-
-if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/backend")
-  install(
-    DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/backend/"
-    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/backend"
-    FILES_MATCHING
-      PATTERN "*.h"
   )
 endif()
 

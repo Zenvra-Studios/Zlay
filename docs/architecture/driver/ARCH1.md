@@ -1,4 +1,4 @@
-Ini model infrastruktur driver/ yang cocok buat ZLay/Zenvra: driver cuma nerima ZLay_RenderCommandList, lalu translate ke OpenGL/Vulkan. Core ZLay lu memang sudah output command list lewat ZLay_BeginLayout() → ZLay_EndLayout(), jadi driver jangan tahu soal Box, Text, parser, atau widget.
+Ini model infrastruktur drivers/gpu yang cocok buat ZLay/Zenvra: driver cuma nerima ZLay_RenderCommandList, lalu translate ke OpenGL/Vulkan. Core ZLay lu memang sudah output command list lewat ZLay_BeginLayout() → ZLay_EndLayout(), jadi driver jangan tahu soal Box, Text, parser, atau widget.
 
 # ZLay Driver Infrastructure
 
@@ -35,7 +35,7 @@ Driver hanya mengurus:
 ✅ present
 ✅ low latency
 Folder Structure
-src/driver/
+zlay/drivers/gpu/
 ├── zlay_driver.h
 ├── zlay_driver.c
 ├── zlay_backend.h
@@ -75,7 +75,7 @@ src/driver/
 
 Minimum dulu:
 
-src/driver/
+zlay/drivers/gpu/
 ├── zlay_driver.h
 ├── zlay_driver.c
 ├── zlay_backend.h
@@ -530,7 +530,7 @@ Jadi pembagiannya:
 os/
   window, input, event, timer
 
-driver/
+drivers/gpu/
   GPU context, swapchain, present
 
 renderer/
@@ -592,7 +592,7 @@ Saran Final
 
 Mulai dari ini dulu:
 
-driver/
+drivers/gpu/
 ├── zlay_driver.h
 ├── zlay_driver.c
 ├── zlay_backend.h

@@ -1,11 +1,12 @@
 # ZLay Renderer Layer
 
-ZLay renderer layer berada di antara core render commands dan backend driver.
+ZLay renderer layer berada di antara core render commands dan GPU driver.
 
 ```text
 zlay.h render commands
   -> renderer/zlay_renderer.h
-  -> driver/opengl atau driver/vulkan
+  -> backends/renderer/opengl atau backends/renderer/vulkan
+  -> drivers/gpu/opengl atau drivers/gpu/vulkan
 ```
 
 ## Core Renderer Interface
@@ -25,9 +26,17 @@ Header ini menyediakan:
 
 ## Driver Adapters
 
+OpenGL/Vulkan renderer adapter sekarang berada di `zlay/backends/renderer/*`.
+Low-level buffer, pipeline, context, swapchain, dan command wrapper berada di
+`zlay/drivers/gpu/*`.
+Runtime binding dari `ZLay_RenderScene` ke renderer backend berada di
+`zlay/backends/zlay_render_driver_backend.h`.
+
 OpenGL:
 
 ```c
+#include <backends/renderer/opengl/zlay_opengl_renderer_backend.h>
+
 ZLay_OpenGLRenderer gl_backend;
 ZLay_OpenGLRenderer_Init(&gl_backend, &info);
 ZLay_Renderer renderer = ZLay_OpenGLRenderer_AsRenderer(&gl_backend);
@@ -36,6 +45,8 @@ ZLay_Renderer renderer = ZLay_OpenGLRenderer_AsRenderer(&gl_backend);
 Vulkan:
 
 ```c
+#include <backends/renderer/vulkan/zlay_vulkan_renderer_backend.h>
+
 ZLay_VulkanRenderer vk_backend;
 ZLay_VulkanRenderer_Init(&vk_backend, &info);
 ZLay_Renderer renderer = ZLay_VulkanRenderer_AsRenderer(&vk_backend);

@@ -4,9 +4,13 @@ ZLay mengikuti pemisahan ala backend ImGui:
 
 - `zlay.h` adalah core layout/style/render-command murni C.
 - `zlay/renderer/` adalah interface render backend-agnostic.
-- `zlay/os/` adalah platform backend: window bridge, frame size, DPI, timer, style info.
-- `zlay/os/win32/` adalah backend Windows. `zlay/os/winrt/` bukan backend kedua; folder itu hanya support modern Windows 10/11 di atas handle Win32 yang sudah ada.
-- `zlay/driver/` adalah implementasi backend renderer: OpenGL/Vulkan translation dari render command ke data render.
+- `zlay/os/` adalah facade/platform abstraction: window bridge, frame size, DPI, timer, style info.
+- `zlay/backends/platform/win32/` adalah backend Windows. `zlay/backends/platform/winrt/` bukan backend kedua; folder itu hanya support modern Windows 10/11 di atas handle Win32 yang sudah ada.
+- `zlay/backends/renderer/` adalah adapter renderer: OpenGL/Vulkan translation dari render command ke data render.
+- `zlay/drivers/gpu/` adalah wrapper low-level GPU/API: buffer, pipeline, context, swapchain, command, dan sync.
+- `zlay/backends/layout/` adalah adapter layout, termasuk Clay.
+- `zlay/backends/zlay_backends.h` adalah aggregator interface backend; `zlay/backends/zlay_render_driver_backend.h` adalah binding runtime dari `ZLay_RenderScene` ke renderer backend.
+- `third_party/` berisi dependensi vendor yang tidak dicampur ke core.
 - `include/` dipakai untuk helper tutorial/example, bukan implementasi core library.
 
 ZLay tidak memasukkan CSS runtime, DOM scripting, JavaScript manipulation, WebKit, atau Chromium ke dalam core. Jika nanti WebGPU masuk, WebGPU diposisikan sebagai renderer backend, bukan sebagai alasan membawa model aplikasi web ke dalam library.
@@ -16,6 +20,7 @@ ZLay tidak memasukkan CSS runtime, DOM scripting, JavaScript manipulation, WebKi
 ```text
 zlay/os/
   zlay_os.h
+zlay/backends/platform/
   win32/zlay_win32_backend.h
   win32/zlay_win32_event.c
   win32/zlay_win32_file.c
@@ -43,8 +48,13 @@ zlay/os/
   cocoa/zlay_cocoa_event.mm
   cocoa/zlay_cocoa_timer.mm
   cocoa/zlay_cocoa_native.mm
-  gtk/zlay_impl_gtk.h
-  gtk/zlay_impl_gtk.c
+  gtk/zlay_gtk_backend.h
+  gtk/zlay_gtk_platform.c
+  gtk/zlay_gtk_window.c
+  gtk/zlay_gtk_event.c
+  gtk/zlay_gtk_timer.c
+  gtk/zlay_gtk_clipboard.c
+  gtk/zlay_gtk_native.c
   x11/zlay_x11_platform.h
   x11/zlay_x11_platform.c
 ```
@@ -55,15 +65,24 @@ zlay/os/
 zlay/renderer/
   zlay_renderer.h
   zlay_renderer.c
-zlay/driver/
-  opengl/zlay_opengl.h        # compatibility facade
+zlay/backends/
+  zlay_backends.h
+  zlay_renderer_backend.h
+  zlay_render_driver_backend.h
+zlay/backends/renderer/
+  opengl/zlay_opengl_renderer_backend.h
+  opengl/zlay_opengl_renderer_backend.c
+  vulkan/zlay_vulkan_renderer_backend.h
+  vulkan/zlay_vulkan_renderer_backend.c
+zlay/drivers/gpu/
+  opengl/zlay_opengl.h        # low-level driver facade
   opengl/zlay_gl_driver.h
   opengl/zlay_gl_driver.c
   opengl/zlay_gl_context.c
   opengl/zlay_gl_pipeline.c
   opengl/zlay_gl_buffer.c
   opengl/zlay_gl_texture.c
-  vulkan/zlay_vulkan.h        # compatibility facade
+  vulkan/zlay_vulkan.h        # low-level driver facade
   vulkan/zlay_vk_driver.h
   vulkan/zlay_vk_driver.c
   vulkan/zlay_vk_instance.c
@@ -75,7 +94,7 @@ zlay/driver/
   vulkan/zlay_vk_sync.c
 ```
 
-Semua folder di bawah `zlay/` tetap diekspor sebagai include public lewat CMake, jadi consumer dapat memakai `#include <zlay.h>`, `#include <renderer/zlay_renderer.h>`, `#include <driver/opengl/zlay_opengl.h>`, dan `#include <os/zlay_os.h>` tanpa peduli lokasi fisik internalnya.
+Semua folder di bawah `zlay/` tetap diekspor sebagai include public lewat CMake, jadi consumer dapat memakai `#include <zlay.h>`, `#include <backends/zlay_backends.h>`, `#include <renderer/zlay_renderer.h>`, `#include <backends/renderer/opengl/zlay_opengl_renderer_backend.h>`, `#include <drivers/gpu/opengl/zlay_opengl.h>`, dan `#include <os/zlay_os.h>` tanpa peduli lokasi fisik internalnya.
 
 ## CMake Selection
 
@@ -116,7 +135,7 @@ Each platform backend exposes `ZLay_OS_GetStyleInfo()` so examples/tools can sta
 - Cocoa/UIKit: Apple system theme, DPI scale, clipboard, cursor/monitor helpers, and non-owning native handle support for `NSWindow`/`NSView`/`CAMetalLayer` or `UIWindow`/`UIView`/`CAMetalLayer`.
 - X11: neutral dark editor palette for engine tools.
 
-`zlay/os/winrt/zlay_winrt_modern.h` exposes the modern Windows helpers directly:
+`zlay/backends/platform/winrt/zlay_winrt_modern.h` exposes the modern Windows helpers directly:
 
 - `ZLay_WinRTModernEnable()`, `ZLay_WinRTModernDisable()`, and `ZLay_WinRTIsAvailable()` for the Win32 -> WinRT enhancement chain.
 - `ZLay_WinRT_GetSystemThemeMode()` and `ZLay_WinRT_GetSystemStyleInfo()` for theme-aware layout/style defaults.

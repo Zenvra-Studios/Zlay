@@ -687,9 +687,9 @@ option(ZLAY_BUILD_TESTS "Build tests" OFF)
 # Install Layout
 
 ```txt
-include/zlay/zlay.h
-include/zlay/zlay_math.h
-include/zlay/zlay_parser.h
+zlay.h
+zlay_math.h
+zlay/zlay_parser.h
 
 lib/libzlay.a
 

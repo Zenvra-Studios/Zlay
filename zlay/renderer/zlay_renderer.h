@@ -7,6 +7,10 @@ extern "C" {
 
 #include <zlay.h>
 
+#if defined(ZLAY_ENABLE_CANVAS)
+#  include <renderer/canvas/zlay_canvas.h>
+#endif
+
 typedef enum ZLay_RendererBackendType {
   ZLAY_RENDERER_BACKEND_NULL = 0,
   ZLAY_RENDERER_BACKEND_OPENGL,

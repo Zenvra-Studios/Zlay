@@ -7,6 +7,8 @@ void ZLay_PollEvents(void) {
   ZLay_Win32_PollEvents();
 #elif defined(ZLAY_OS_BACKEND_SELECTED_COCOA)
   ZLay_Cocoa_PollEvents();
+#elif defined(ZLAY_OS_BACKEND_SELECTED_GTK)
+  ZLay_GTK_PollEvents();
 #elif defined(ZLAY_OS_BACKEND_SELECTED_X11)
   ZLay_X11_PollEvents();
 #endif
@@ -17,6 +19,8 @@ bool ZLay_WindowNextEvent(ZLay_Window* window, ZLay_Event* out_event) {
   return ZLay_Win32_WindowNextEvent(window, out_event);
 #elif defined(ZLAY_OS_BACKEND_SELECTED_COCOA)
   return ZLay_Cocoa_WindowNextEvent(window, out_event);
+#elif defined(ZLAY_OS_BACKEND_SELECTED_GTK)
+  return ZLay_GTK_WindowNextEvent(window, out_event);
 #elif defined(ZLAY_OS_BACKEND_SELECTED_X11)
   return ZLay_X11_WindowNextEvent(window, out_event);
 #else
@@ -31,6 +35,8 @@ void ZLay_WindowPushEvent(ZLay_Window* window, const ZLay_Event* event) {
   ZLay_Win32_WindowPushEvent(window, event);
 #elif defined(ZLAY_OS_BACKEND_SELECTED_COCOA)
   ZLay_Cocoa_WindowPushEvent(window, event);
+#elif defined(ZLAY_OS_BACKEND_SELECTED_GTK)
+  ZLay_GTK_WindowPushEvent(window, event);
 #elif defined(ZLAY_OS_BACKEND_SELECTED_X11)
   ZLay_X11_WindowPushEvent(window, event);
 #else
